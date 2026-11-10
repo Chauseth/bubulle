@@ -43,7 +43,7 @@ Rien n'est automatisé : Bubulle rend simplement la pêche agréable. Conçu pou
 
 ## 🚀 Pour commencer
 
-1. Télécharge `Bubulle.zip` dans la [dernière version](https://github.com/Chauseth/bubulle/releases/latest) et place le dossier `Bubulle` dans `World of Warcraft\_forever_\Interface\AddOns` (ou `_retail_`).
+1. Télécharge le fichier `.zip` de la [dernière version](https://github.com/Chauseth/bubulle/releases/latest) et place le dossier `Bubulle` dans `World of Warcraft\_forever_\Interface\AddOns` (ou `_retail_`).
 2. En jeu, tape `/bubulle` ou clique sur le bouton de la minicarte.
 3. Choisis ta **touche de pêche** sur l'écran d'accueil.
 4. Va au bord de l'eau et appuie sur ta touche. Bubulle s'occupe du reste.

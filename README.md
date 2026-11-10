@@ -43,7 +43,7 @@ Nothing is automated: Bubulle simply makes fishing comfortable. Built for **WoW 
 
 ## 🚀 Getting started
 
-1. Download `Bubulle.zip` from the [latest release](https://github.com/Chauseth/bubulle/releases/latest) and put the `Bubulle` folder in `World of Warcraft\_forever_\Interface\AddOns` (or `_retail_`).
+1. Download the `.zip` file from the [latest release](https://github.com/Chauseth/bubulle/releases/latest) and put the `Bubulle` folder in `World of Warcraft\_forever_\Interface\AddOns` (or `_retail_`).
 2. Log in and type `/bubulle`, or click the minimap button.
 3. Pick your **fishing key** on the welcome screen.
 4. Walk to the water and press your key. Bubulle takes care of the rest.
