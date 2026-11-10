@@ -1,0 +1,348 @@
+--[[
+    Bubulle - Locales.lua
+    ------------------------------------------------------------------
+    Tous les textes affichés, en anglais (par défaut) et en français.
+    Le jeu indique sa langue avec GetLocale() : "frFR" pour le français.
+
+    Pour corriger une phrase ou en ajouter, c'est ici que ça se passe.
+    Les "%s" et "%d" sont remplacés par des valeurs (un nom, un nombre).
+    Les répliques de Bubulle sont des listes : il en choisit une au hasard.
+]]
+
+local _, ns = ...
+
+local enUS = {
+    -- Général
+    MODE_ON  = "Fishing mode",
+    MODE_OFF = "Resting",
+    MODE_AUTO_OFF = "Fishing mode ended (no cast for a while).",
+    ERR_COMBAT = "Not possible during combat.",
+    NEVER = "Never",
+    DATE_FORMAT = "%m/%d/%Y",
+
+    -- Aide /bubulle
+    HELP_HEADER  = "commands:",
+    HELP_TOGGLE  = "open or close the window",
+    HELP_FISH    = "start or stop fishing mode",
+    HELP_HUD     = "always show or hide Bubulle's panel",
+    HELP_OPTIONS = "open the options",
+    HELP_SESSION = "start a new session",
+    SESSION_RESET_DONE = "New session started.",
+
+    COMPARTMENT_LEFT  = "Left-click: open the window",
+    COMPARTMENT_RIGHT = "Right-click: start / stop fishing mode",
+
+    -- Comment lancer
+    HINT_DOUBLECLICK = "Double right-click on the water to cast!",
+    HINT_KEY = "Press %s to cast, then again to hook.",
+    HINT_MANUAL = "Cast Fishing to start.",
+
+    -- Panneau
+    HUD_CLOSE = "Stop fishing",
+    HUD_CLOSE_TIP = "Ends fishing mode and hides the panel. Your sound settings are restored.",
+    HUD_JOURNAL = "Open the journal",
+    HUD_BOBBER = "Bobber in the water",
+    HUD_READY = "Ready to cast",
+    HUD_NO_CATCH = "Your catches will show up here",
+    HUD_SESSION = "Session %s",
+    HUD_SUCCESS = "Success %s",
+
+    STAT_CATCHES = "catches",
+    STAT_CASTS = "casts",
+    STAT_PER_HOUR = "/ hour",
+    STAT_SUCCESS_SHORT = "success",
+    STAT_CATCHES_LONG = "Catches",
+    STAT_CASTS_LONG = "Casts",
+    STAT_SUCCESS = "Success rate",
+    STAT_PER_HOUR_LONG = "Catches per hour",
+
+    -- Fenêtre
+    WINDOW_SUBTITLE = "Your fishing assistant",
+    TAB_SESSION = "Session",
+    TAB_JOURNAL = "Journal",
+    TAB_OPTIONS = "Options",
+
+    SESSION_LIST = "This session's catches",
+    SESSION_EMPTY = "Nothing yet. Double right-click near the water to cast your line!",
+    SUMMARY_EMPTY = "Ready when you are! Find some water and double right-click to cast.",
+    SUMMARY = "Nice session! %d catches in %s.\nMost frequent: %s.",
+    BTN_START = "Start fishing",
+    BTN_STOP = "Stop fishing",
+    BTN_NEW_SESSION = "New session",
+
+    JOURNAL_ZONES = "Zones",
+    JOURNAL_ALL = "All zones",
+    JOURNAL_NO_ZONE = "Your fishing spots will be listed here.",
+    JOURNAL_EMPTY = "No catch recorded here yet.",
+    JOURNAL_TOTALS = "All time: %d catches · %d casts · %s fishing · %d different items",
+    ZONE_ROW = "%d catches · %d items",
+    ZONE_DETAIL = "%d catches · %d items · %d kinds · last visit %s",
+    ZONE_DETAIL_ALL = "%d catches · %d items · %d kinds · %d zones",
+
+    -- Options
+    SECTION_CAST = "Casting",
+    SECTION_BEHAVIOUR = "Behaviour",
+    SECTION_BUBULLE = "Bubulle",
+    SECTION_SOUND = "Sound",
+    SECTION_DISPLAY = "Display",
+
+    OPT_DOUBLECLICK = "Double right-click to cast",
+    OPT_DOUBLECLICK_TIP = "In fishing mode, a quick double right-click on the world casts Fishing. Right-clicking the bobber still hooks the fish.",
+    OPT_DOUBLECLICK_ALWAYS = "Even outside fishing mode",
+    OPT_DOUBLECLICK_ALWAYS_TIP = "Double right-click casts Fishing at any time (out of combat). Handy, but can surprise you while moving the camera.",
+    OPT_DELAY = "Double-click speed",
+    OPT_ONEKEY_HELP = "Left-click to choose, right-click to clear.",
+    OPT_ONEKEY_TIP = "Casts your line, then hooks the bobber when it splashes (uses the game's Interact key). If it ever misses the bobber, right-click it as usual.",
+    OPT_IDLE = "Leave fishing mode after",
+    OPT_AUTOLOOT = "Auto loot while fishing",
+    OPT_AUTOLOOT_TIP = "Turns on auto loot during fishing mode only.",
+    OPT_TALK = "Bubulle comments on your fishing",
+    OPT_TALK_TIP = "Speech bubbles: catches, misses, new zones, tips...",
+    OPT_ALERT_NEW = "Notify new species",
+    OPT_ALERT_RARE = "Notify rare catches",
+    OPT_ALERT_SOUND = "Play a sound with notifications",
+    OPT_SOUND = "Make the splash easy to hear",
+    OPT_SOUND_TIP = "During fishing mode, raises sound effects and lowers music and ambience. Your settings are restored afterwards.",
+    OPT_SFX = "Sound effects volume",
+    OPT_MUTE_MUSIC = "Mute music",
+    OPT_MUTE_AMBIENCE = "Mute ambience",
+    OPT_BACKGROUND = "Keep sound in background",
+    OPT_BACKGROUND_TIP = "Hear the splash even when the game window isn't focused.",
+    OPT_HUD_AUTO = "Show Bubulle when fishing",
+    OPT_HUD_ALWAYS = "Always show Bubulle",
+    OPT_HUD_LOCK = "Lock the panel",
+    OPT_MINIMAP = "Button on the minimap",
+    OPT_MINIMAP_TIP = "Drag it to move it around the minimap. /bubulle minimap shows or hides it too.",
+    MINIMAP_DRAG = "Drag: move the button",
+    HELP_MINIMAP = "show or hide the minimap button",
+    OPT_HUD_SCALE = "Panel size",
+    OPT_FOOTER = "Bubulle v%s  ·  /bubulle",
+    BTN_RESET_POSITION = "Reset panel position",
+
+    OPT_ONEKEY = "Fishing key (cast + hook)",
+    OPT_ONEKEY_ALWAYS = "Key works outside fishing mode",
+    OPT_ONEKEY_ALWAYS_TIP = "Out of combat, the key casts your line at any time, so you can start fishing with it. Pick a key you don't use for anything else.",
+    HUD_NO_POLE = "No fishing pole",
+    HUD_LURE = "Lure %d min",
+    HUD_NO_LURE = "No lure",
+    SAY_NO_POLE = "Wait! Equip your fishing pole first, or the line won't go anywhere.",
+    SAY_NO_LURE = "Your pole has no lure. A lure makes fish bite faster!",
+    WELCOME_TITLE = "Hi, I'm Bubulle!",
+    WELCOME_TEXT = "I'll be your fishing buddy. Choose ONE key: it casts your line, then hooks the fish when the bobber splashes. No more hunting for the bobber with the mouse!\n\nDouble right-click on the water also casts, if you prefer the mouse.",
+    WELCOME_KEY = "Your fishing key",
+    WELCOME_TIP = "Click the button, then press a key you don't use (for example F, or a mouse side button bound to a key). You can change it anytime in Options.",
+    WELCOME_GO = "Let's go fishing!",
+    WELCOME_LATER = "Later",
+    KEY_NONE = "None",
+    KEY_PRESS = "Press a key...",
+
+    SETTINGS_DESC = "Your fishing assistant: double right-click to cast, clear splash sounds and a full fishing journal.",
+    SETTINGS_OPEN = "Open Bubulle",
+
+    TOAST_NEW = "New species!",
+    TOAST_RARE = "Rare catch!",
+
+    -- Répliques de Bubulle
+    SAY_DEFAULT_OFF = "Blub! Cast Fishing and I'll keep you company.",
+    SAY_DEFAULT_WATCHING = "I'm watching the bobber... listen for the splash!",
+    SAY_HELLO = {
+        "Blub blub! Let's go fishing!",
+        "Ah, the water! Let's see what's biting.",
+        "Fishing time! I'll keep count for you.",
+    },
+    SAY_BYE = {
+        "See you soon at the water's edge!",
+        "Good session! Blub!",
+    },
+    SAY_WAIT = {
+        "Shhh... watch the bobber.",
+        "Patience... something's moving down there.",
+        "Listen carefully for the splash!",
+        "I can feel it, this one's a big one.",
+    },
+    SAY_MISS = {
+        "Missed... cast again?",
+        "It got away! Next one is ours.",
+        "Too bad. Double right-click to try again.",
+    },
+    SAY_CATCH = {
+        "Nice! %s.",
+        "Got it: %s!",
+        "Into the bag: %s.",
+        "Well done! %s.",
+    },
+    SAY_NEW = "Whoa! A new species: %s!",
+    SAY_RARE = "Wow, %s! What a catch!",
+    SAY_MILESTONE = "Already %d catches this session!",
+    SAY_ZONE_KNOWN = "Back in %s! %d catches here in your journal.",
+    SAY_ZONE_NEW = "%s... new waters! Let's see what lives here.",
+}
+
+local frFR = {
+    MODE_ON  = "Mode pêche",
+    MODE_OFF = "Au repos",
+    MODE_AUTO_OFF = "Mode pêche terminé (aucun lancer depuis un moment).",
+    ERR_COMBAT = "Impossible pendant un combat.",
+    NEVER = "Jamais",
+    DATE_FORMAT = "%d/%m/%Y",
+
+    HELP_HEADER  = "commandes :",
+    HELP_TOGGLE  = "ouvrir ou fermer la fenêtre",
+    HELP_FISH    = "commencer ou arrêter le mode pêche",
+    HELP_HUD     = "afficher ou masquer en permanence le panneau de Bubulle",
+    HELP_OPTIONS = "ouvrir les options",
+    HELP_SESSION = "commencer une nouvelle session",
+    SESSION_RESET_DONE = "Nouvelle session commencée.",
+
+    COMPARTMENT_LEFT  = "Clic gauche : ouvrir la fenêtre",
+    COMPARTMENT_RIGHT = "Clic droit : commencer / arrêter la pêche",
+    OPT_MINIMAP = "Bouton sur la minicarte",
+    OPT_MINIMAP_TIP = "Fais-le glisser pour le déplacer autour de la minicarte. /bubulle minimap l'affiche ou le cache aussi.",
+    MINIMAP_DRAG = "Glisser : déplacer le bouton",
+    HELP_MINIMAP = "afficher ou cacher le bouton de la minicarte",
+
+    HINT_DOUBLECLICK = "Double-clic droit sur l'eau pour lancer !",
+    HINT_KEY = "Appuie sur %s pour lancer, puis encore pour ferrer.",
+    HINT_MANUAL = "Lance Pêche pour commencer.",
+
+    HUD_CLOSE = "Arrêter de pêcher",
+    HUD_CLOSE_TIP = "Termine le mode pêche et masque le panneau. Tes réglages de son sont rétablis.",
+    HUD_JOURNAL = "Ouvrir le carnet",
+    HUD_BOBBER = "Bouchon à l'eau",
+    HUD_READY = "Prêt à lancer",
+    HUD_NO_CATCH = "Tes prises apparaîtront ici",
+    HUD_SESSION = "Session %s",
+    HUD_SUCCESS = "Réussite %s",
+
+    STAT_CATCHES = "prises",
+    STAT_CASTS = "lancers",
+    STAT_PER_HOUR = "/ heure",
+    STAT_SUCCESS_SHORT = "réussite",
+    STAT_CATCHES_LONG = "Prises",
+    STAT_CASTS_LONG = "Lancers",
+    STAT_SUCCESS = "Réussite",
+    STAT_PER_HOUR_LONG = "Prises par heure",
+
+    WINDOW_SUBTITLE = "Ton assistant de pêche",
+    TAB_SESSION = "Session",
+    TAB_JOURNAL = "Carnet",
+    TAB_OPTIONS = "Options",
+
+    SESSION_LIST = "Prises de la session",
+    SESSION_EMPTY = "Rien pour l'instant. Double-clic droit près de l'eau pour lancer ta ligne !",
+    SUMMARY_EMPTY = "Je suis prêt ! Trouve un coin d'eau et fais un double-clic droit pour lancer.",
+    SUMMARY = "Belle session ! %d prises en %s.\nLa plus fréquente : %s.",
+    BTN_START = "Commencer à pêcher",
+    BTN_STOP = "Arrêter de pêcher",
+    BTN_NEW_SESSION = "Nouvelle session",
+
+    JOURNAL_ZONES = "Zones",
+    JOURNAL_ALL = "Toutes les zones",
+    JOURNAL_NO_ZONE = "Tes coins de pêche s'afficheront ici.",
+    JOURNAL_EMPTY = "Aucune prise enregistrée ici pour l'instant.",
+    JOURNAL_TOTALS = "Depuis toujours : %d prises · %d lancers · %s de pêche · %d objets différents",
+    ZONE_ROW = "%d prises · %d objets",
+    ZONE_DETAIL = "%d prises · %d objets · %d sortes · dernière visite le %s",
+    ZONE_DETAIL_ALL = "%d prises · %d objets · %d sortes · %d zones",
+
+    SECTION_CAST = "Lancer",
+    SECTION_BEHAVIOUR = "Comportement",
+    SECTION_BUBULLE = "Bubulle",
+    SECTION_SOUND = "Son",
+    SECTION_DISPLAY = "Affichage",
+
+    OPT_DOUBLECLICK = "Double-clic droit pour lancer",
+    OPT_DOUBLECLICK_TIP = "En mode pêche, un double-clic droit rapide sur le décor lance Pêche. Un clic droit sur le bouchon ferre toujours le poisson.",
+    OPT_DOUBLECLICK_ALWAYS = "Même hors du mode pêche",
+    OPT_DOUBLECLICK_ALWAYS_TIP = "Le double-clic droit lance Pêche à tout moment (hors combat). Pratique, mais peut surprendre quand tu tournes la caméra.",
+    OPT_DELAY = "Vitesse du double-clic",
+    OPT_ONEKEY_HELP = "Clic gauche pour choisir, clic droit pour effacer.",
+    OPT_ONEKEY_TIP = "Lance ta ligne, puis ferre le bouchon quand il fait plouf (grâce à la touche « Interagir » du jeu). S'il rate le bouchon, un clic droit dessus marche toujours.",
+    OPT_IDLE = "Quitter le mode pêche après",
+    OPT_AUTOLOOT = "Butin automatique pendant la pêche",
+    OPT_AUTOLOOT_TIP = "Active le butin automatique seulement pendant le mode pêche.",
+    OPT_TALK = "Bubulle commente ta pêche",
+    OPT_TALK_TIP = "Des bulles de dialogue : prises, ratés, nouvelles zones, conseils...",
+    OPT_ALERT_NEW = "Prévenir des nouvelles espèces",
+    OPT_ALERT_RARE = "Prévenir des prises rares",
+    OPT_ALERT_SOUND = "Jouer un son avec les notifications",
+    OPT_SOUND = "Bien entendre le bouchon",
+    OPT_SOUND_TIP = "Pendant le mode pêche, monte les effets sonores et baisse musique et ambiance. Tes réglages sont rétablis ensuite.",
+    OPT_SFX = "Volume des effets",
+    OPT_MUTE_MUSIC = "Couper la musique",
+    OPT_MUTE_AMBIENCE = "Couper l'ambiance",
+    OPT_BACKGROUND = "Garder le son en arrière-plan",
+    OPT_BACKGROUND_TIP = "Entendre le plouf même quand la fenêtre du jeu n'est pas active.",
+    OPT_HUD_AUTO = "Afficher Bubulle pendant la pêche",
+    OPT_HUD_ALWAYS = "Toujours afficher Bubulle",
+    OPT_HUD_LOCK = "Verrouiller le panneau",
+    OPT_HUD_SCALE = "Taille du panneau",
+    OPT_FOOTER = "Bubulle v%s  ·  /bubulle",
+    BTN_RESET_POSITION = "Replacer le panneau",
+
+    OPT_ONEKEY = "Touche de pêche (lancer + ferrer)",
+    OPT_ONEKEY_ALWAYS = "Touche active hors du mode pêche",
+    OPT_ONEKEY_ALWAYS_TIP = "Hors combat, la touche lance ta ligne à tout moment : tu peux commencer à pêcher avec elle. Choisis une touche qui ne sert à rien d'autre.",
+    HUD_NO_POLE = "Pas de canne",
+    HUD_LURE = "Appât %d min",
+    HUD_NO_LURE = "Sans appât",
+    SAY_NO_POLE = "Attends ! Équipe d'abord ta canne à pêche, sinon la ligne n'ira nulle part.",
+    SAY_NO_LURE = "Ta canne n'a plus d'appât. Avec un appât, ça mord plus vite !",
+    WELCOME_TITLE = "Salut, moi c'est Bubulle !",
+    WELCOME_TEXT = "Je serai ton compagnon de pêche. Choisis UNE touche : elle lance ta ligne, puis ferre le poisson quand le bouchon fait plouf. Fini de chercher le bouchon avec la souris !\n\nLe double-clic droit sur l'eau lance aussi la ligne, si tu préfères la souris.",
+    WELCOME_KEY = "Ta touche de pêche",
+    WELCOME_TIP = "Clique sur le bouton, puis appuie sur une touche que tu n'utilises pas (par exemple F). Tu pourras la changer à tout moment dans les Options.",
+    WELCOME_GO = "C'est parti !",
+    WELCOME_LATER = "Plus tard",
+    KEY_NONE = "Aucune",
+    KEY_PRESS = "Appuie sur une touche...",
+
+    SETTINGS_DESC = "Ton assistant de pêche : double-clic droit pour lancer, bruit du bouchon mis en avant et carnet de pêche complet.",
+    SETTINGS_OPEN = "Ouvrir Bubulle",
+
+    TOAST_NEW = "Nouvelle espèce !",
+    TOAST_RARE = "Prise rare !",
+
+    SAY_DEFAULT_OFF = "Bloup ! Lance Pêche et je te tiens compagnie.",
+    SAY_DEFAULT_WATCHING = "Je surveille le bouchon... guette le plouf !",
+    SAY_HELLO = {
+        "Bloup bloup ! On va pêcher ?",
+        "Ah, de l'eau ! Voyons ce qui mord par ici.",
+        "C'est l'heure de la pêche ! Je compte tout pour toi.",
+    },
+    SAY_BYE = {
+        "À bientôt au bord de l'eau !",
+        "Belle session ! Bloup !",
+    },
+    SAY_WAIT = {
+        "Chut... surveille le bouchon.",
+        "Patience... ça bouge là-dessous.",
+        "Tends bien l'oreille pour le plouf !",
+        "Je le sens, celui-là est un gros.",
+    },
+    SAY_MISS = {
+        "Raté... on relance ?",
+        "Il s'est échappé ! Le prochain est pour nous.",
+        "Dommage. Double-clic droit pour retenter.",
+    },
+    SAY_CATCH = {
+        "Joli ! %s.",
+        "Et hop : %s !",
+        "Dans le sac : %s.",
+        "Bien joué ! %s.",
+    },
+    SAY_NEW = "Oh ! Une nouvelle espèce : %s !",
+    SAY_RARE = "Waouh, %s ! Quelle prise !",
+    SAY_MILESTONE = "Déjà %d prises pendant cette session !",
+    SAY_ZONE_KNOWN = "Retour à %s ! %d prises ici dans ton carnet.",
+    SAY_ZONE_NEW = "%s... de nouvelles eaux ! Voyons qui vit ici.",
+}
+
+-- Le français est utilisé sur un client français ; sinon l'anglais.
+-- Si une traduction manque, on retombe sur l'anglais, puis sur la clé.
+local active = (GetLocale() == "frFR") and frFR or {}
+ns.L = setmetatable(active, {
+    __index = function(_, key)
+        return enUS[key] or key
+    end,
+})
