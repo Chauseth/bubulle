@@ -1,0 +1,7 @@
+package-as: Bubulle
+
+ignore:
+  - tests
+  - tools
+  - docs
+  - README.fr.md

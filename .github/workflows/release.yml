@@ -1,0 +1,27 @@
+# Publie une nouvelle version quand on pousse une étiquette (ex. v1.0.1) :
+# crée Bubulle.zip (uniquement les fichiers de l'addon) et l'attache à une
+# "Release" GitHub. Si un jour le projet existe sur CurseForge, il suffira
+# d'ajouter le secret CF_API_KEY et la ligne "## X-Curse-Project-ID" au .toc
+# pour que la version y parte aussi.
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: BigWigsMods/packager@v2
+        env:
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
