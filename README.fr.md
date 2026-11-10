@@ -6,7 +6,7 @@
 
 [English version](README.md)
 
-Addon de pêche pour **WoW Forever** (client 1.60.1). Il fonctionne aussi sur Retail.
+Addon de pêche pour **WoW Forever** (client 1.60.1).
 
 Bubulle permet de lancer et de ferrer avec la même touche, monte le son du bouchon pendant la pêche, et note ce que tu attrapes dans chaque zone. Un petit poisson rouge, Bubulle, se tient à côté de ton écran et commente ta pêche de temps en temps.
 
@@ -18,16 +18,9 @@ Bubulle permet de lancer et de ferrer avec la même touche, monte le son du bouc
 
 **Carnet de pêche.** Chaque prise est enregistrée par zone. La fenêtre montre ce que tu as pêché pendant la session, combien de poissons par heure, et combien de lancers ont vraiment rapporté quelque chose. Tu as une notification quand tu attrapes une nouvelle espèce ou un poisson rare.
 
-**Un panneau pendant la pêche.** Il affiche le temps du bouchon, tes dernières prises et les chiffres de la session. Sur Forever, il montre aussi ta compétence de pêche (par exemple `110 (+52) / 150`) et le temps restant de ton appât, et il te prévient quand tu n'as pas de canne équipée.
+**Un panneau pendant la pêche.** Il affiche le temps du bouchon, ta compétence de pêche (par exemple `110 (+52) / 150`), le temps restant de ton appât, tes dernières prises et les chiffres de la session. Il te prévient aussi quand tu n'as pas de canne équipée.
 
 Le butin est ramassé automatiquement pendant la pêche. Il y a un bouton sur la minicarte, et chacune de ces fonctions peut être désactivée dans les options.
-
-## Installation
-
-1. Place le dossier `Bubulle` dans `World of Warcraft\_forever_\Interface\AddOns` (ou `_retail_`).
-2. En jeu, tape `/bubulle` et choisis ta touche de pêche.
-
-Le [guide](docs/GUIDE.md) détaille l'installation pas à pas et chaque option.
 
 ## Commandes
 
@@ -44,9 +37,6 @@ Bouton de la minicarte : clic gauche pour ouvrir la fenêtre, clic droit pour le
 
 ## Questions
 
-**C'est autorisé ?**
-Oui. Un addon ne peut pas lancer de sort tout seul. Le lancer ne part que quand tu appuies sur ta touche ou que tu cliques, comme avec un bouton de barre d'action.
-
 **La touche lance mais ne ferre pas.**
 Le ferrage passe par la fonction « Interagir » du jeu, que Bubulle active pendant la pêche. Vérifie qu'aucun autre addon n'utilise la même touche.
 
@@ -57,6 +47,7 @@ Mieux vaut le désactiver. Deux addons qui gèrent le double-clic et le son en m
 
 - La touche et le double-clic ne marchent pas en combat (aucun addon ne peut lancer de sort en combat).
 - Français et anglais seulement pour l'instant.
+- Bubulle fonctionne aussi sur Retail, sans les infos de compétence, d'appât et de canne.
 
 ## Bugs et suggestions
 

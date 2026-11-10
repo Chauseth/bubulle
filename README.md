@@ -6,7 +6,7 @@
 
 [Version française](README.fr.md)
 
-Fishing addon for **WoW Forever** (client 1.60.1). It also runs on Retail.
+Fishing addon for **WoW Forever** (client 1.60.1).
 
 Bubulle lets you cast and hook with the same key, makes the bobber splash louder while you fish, and keeps track of what you catch in each zone. A small goldfish named Bubulle sits next to your screen and comments on your fishing now and then.
 
@@ -18,14 +18,9 @@ Bubulle lets you cast and hook with the same key, makes the bobber splash louder
 
 **Catch log.** Every catch is saved by zone. The window shows what you caught during the session, how many fish per hour, and how many casts actually caught something. You get a notification when you catch a new species or a rare fish.
 
-**Panel while fishing.** It shows the bobber timer, your last catches and the session numbers. On Forever, it also shows your fishing skill (for example `110 (+52) / 150`) and how long your lure has left, and it tells you when you have no fishing pole equipped.
+**Panel while fishing.** It shows the bobber timer, your fishing skill (for example `110 (+52) / 150`), how long your lure has left, your last catches and the session numbers. It also tells you when you have no fishing pole equipped.
 
 Loot is picked up automatically while you fish. There is a minimap button, and each of these features can be turned off in the options.
-
-## Install
-
-1. Put the `Bubulle` folder in `World of Warcraft\_forever_\Interface\AddOns` (or `_retail_`).
-2. In game, type `/bubulle` and choose your fishing key.
 
 ## Commands
 
@@ -42,9 +37,6 @@ Minimap button: left-click opens the window, right-click starts or stops fishing
 
 ## FAQ
 
-**Is it allowed?**
-Yes. Addons can't cast spells by themselves. The cast only happens when you press your key or click, the same way an action bar button works.
-
 **The key casts but doesn't hook.**
 Hooking uses the game's "Interact" feature, which Bubulle turns on while you fish. Check that no other addon uses the same key.
 
@@ -55,6 +47,7 @@ It's better to disable it. Two addons handling double-click and sound at the sam
 
 - The key and the double-click don't work in combat (no addon can cast in combat).
 - Only English and French for now.
+- Bubulle also runs on Retail, without the skill, lure and fishing pole info.
 
 ## Bugs and suggestions
 
