@@ -1,16 +1,12 @@
-# Bubulle
-
 Fishing addon for **WoW Forever** (client 1.60.1).
 
 Bubulle lets you cast and hook with the same key, makes the bobber splash louder while you fish, and keeps track of what you catch in each zone. A small goldfish named Bubulle sits next to your screen and comments on your fishing now and then.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Chauseth/bubulle/main/docs/screenshots/journal.png" width="720" alt="The fishing journal">
-</p>
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Chauseth/bubulle/main/docs/screenshots/session.png" width="470" alt="Today's session">
-  <img src="https://raw.githubusercontent.com/Chauseth/bubulle/main/docs/screenshots/hud.png" width="240" alt="The panel while fishing">
-</p>
+![The fishing journal](https://raw.githubusercontent.com/Chauseth/bubulle/main/docs/screenshots/journal.png)
+
+![Today's session](https://raw.githubusercontent.com/Chauseth/bubulle/main/docs/screenshots/session.png)
+
+![The panel while fishing](https://raw.githubusercontent.com/Chauseth/bubulle/main/docs/screenshots/hud.png)
 
 ## What it does
 
@@ -26,23 +22,23 @@ Loot is picked up automatically while you fish. There is a minimap button, and e
 
 ## Commands
 
-| Command | |
-|---|---|
-| `/bubulle` | open the window |
-| `/bubulle peche` | start or stop fishing mode |
-| `/bubulle hud` | keep the panel shown or hidden |
-| `/bubulle options` | open the options |
-| `/bubulle session` | start a new session |
-| `/bubulle minimap` | show or hide the minimap button |
+- `/bubulle`: open the window
+- `/bubulle peche`: start or stop fishing mode
+- `/bubulle hud`: keep the panel shown or hidden
+- `/bubulle options`: open the options
+- `/bubulle session`: start a new session
+- `/bubulle minimap`: show or hide the minimap button
 
 Minimap button: left-click opens the window, right-click starts or stops fishing mode. Drag it to move it.
 
 ## FAQ
 
 **The key casts but doesn't hook.**
+
 Hooking uses the game's "Interact" feature, which Bubulle turns on while you fish. Check that no other addon uses the same key.
 
 **Can I keep another fishing addon?**
+
 It's better to disable it. Two addons handling double-click and sound at the same time get in each other's way.
 
 ## Known issues
