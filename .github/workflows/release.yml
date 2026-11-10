@@ -9,6 +9,13 @@ on:
   push:
     tags:
       - "v*"
+  # Ou à la main, depuis l'onglet Actions : "Run workflow" avec le numéro
+  # de version (ex. 1.0.1). L'étiquette vX.Y.Z est alors créée ici.
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Numéro de version (ex. 1.0.1)"
+        required: true
 
 permissions:
   contents: write
@@ -20,6 +27,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Créer l'étiquette (lancement manuel)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${{ inputs.version }}" -m "Bubulle ${{ inputs.version }}"
+          git push origin "v${{ inputs.version }}"
 
       - uses: BigWigsMods/packager@v2
         env:
