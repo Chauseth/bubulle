@@ -498,7 +498,7 @@ local function BuildOptionsSpread(spread, left, right)
     keyLabel:SetText(L.OPT_ONEKEY)
     spread.keyButton = W.KeyButton(keyRow,
         function() return s().oneKey end,
-        function(v) s().oneKey = v; Changed() end, 140)
+        function(v) ns.Fishing:SetKey(v); Changed() end, 140)
     spread.keyButton:SetPoint("TOPLEFT", 0, -20)
     local keyHelp = W.Text(keyRow, Theme.font.tiny)
     keyHelp:SetPoint("LEFT", spread.keyButton, "RIGHT", 10, 0)
@@ -625,8 +625,7 @@ local function BuildWelcome()
     local keyButton = W.KeyButton(right,
         function() return ns.db.settings.oneKey end,
         function(v)
-            ns.db.settings.oneKey = v
-            ns.Fishing:RefreshSettings()
+            ns.Fishing:SetKey(v)
             ns:Fire("SETTINGS_CHANGED")
         end, 200)
     keyButton:SetHeight(30)

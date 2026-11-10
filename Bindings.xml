@@ -1,0 +1,10 @@
+<!--
+    Bubulle - Bindings.xml
+    Ajoute la touche de pêche au menu du jeu : Options > Raccourcis > AddOns.
+    Le jeu lit ce fichier tout seul (il n'a pas besoin d'être dans le .toc).
+-->
+<Bindings>
+    <Binding name="BUBULLE_FISH" header="BUBULLE" category="ADDONS">
+        Bubulle_OnFishKey()
+    </Binding>
+</Bindings>

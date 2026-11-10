@@ -193,6 +193,67 @@ function Fishing:UpdateOneKey()
 end
 
 ------------------------------------------------------------------------
+-- La touche de pêche apparaît aussi dans le menu du jeu :
+-- Options > Raccourcis > AddOns > Bubulle (voir Bindings.xml).
+-- Les deux restent synchronisés : choisir la touche dans Bubulle la
+-- range dans le menu du jeu, et la changer dans le menu du jeu met
+-- Bubulle à jour.
+------------------------------------------------------------------------
+local BINDING = "BUBULLE_FISH"
+_G.BINDING_HEADER_BUBULLE = "Bubulle"
+_G.BINDING_NAME_BUBULLE_FISH = L.BINDING_FISH
+
+local bindingsReady = false -- les raccourcis du jeu ne sont lus qu'après la connexion
+local savingBinding = false
+
+--- Range la touche choisie dans les raccourcis du jeu.
+function Fishing:SaveGameBinding()
+    if not bindingsReady or InCombatLockdown() or not SetBinding then return end
+    local wanted = ns.db.settings.oneKey
+    savingBinding = true
+    for _, key in ipairs({ GetBindingKey(BINDING) }) do
+        if key ~= wanted then
+            SetBinding(key) -- retire l'ancienne touche
+        end
+    end
+    if wanted and GetBindingAction(wanted) ~= BINDING then
+        SetBinding(wanted, BINDING)
+    end
+    SaveBindings(GetCurrentBindingSet())
+    savingBinding = false
+end
+
+--- La touche a peut-être changé dans le menu du jeu : on suit.
+function Fishing:ReadGameBinding()
+    if not bindingsReady or savingBinding or not GetBindingKey then return end
+    local key = GetBindingKey(BINDING) or false
+    if key ~= ns.db.settings.oneKey then
+        ns.db.settings.oneKey = key
+        self:RefreshSettings()
+        ns:Fire("SETTINGS_CHANGED")
+    end
+end
+
+--- Choisir la touche depuis Bubulle (accueil ou Réglages). false = aucune.
+function Fishing:SetKey(key)
+    ns.db.settings.oneKey = key or false
+    self:SaveGameBinding()
+    self:RefreshSettings()
+end
+
+--- Appelé par le raccourci du jeu quand Bubulle ne l'a pas "pris" :
+-- hors du mode pêche (option "touche active hors du mode pêche" décochée),
+-- la touche lance le mode pêche ; l'appui suivant lancera la ligne.
+function Bubulle_OnFishKey()
+    if not ns.db or InCombatLockdown() then return end
+    if not Fishing.active then
+        Fishing:SetActive(true)
+    end
+end
+
+ns:RegisterEvent("UPDATE_BINDINGS", function() Fishing:ReadGameBinding() end)
+
+------------------------------------------------------------------------
 -- Réglages du jeu modifiés pendant la pêche (son, butin auto...)
 -- Les valeurs d'origine sont gardées dans BubulleDB.savedCVars : même
 -- après un plantage, elles sont rétablies à la connexion suivante.
@@ -452,6 +513,14 @@ ns:Listen("DB_READY", function()
 end)
 
 ns:Listen("LOGIN", function()
+    -- Les raccourcis du jeu sont chargés : celui du menu du jeu l'emporte ;
+    -- sinon on y range la touche déjà choisie dans Bubulle.
+    bindingsReady = true
+    if GetBindingKey and GetBindingKey(BINDING) then
+        Fishing:ReadGameBinding()
+    elseif ns.db.settings.oneKey then
+        Fishing:SaveGameBinding()
+    end
     -- La touche de pêche peut être active dès la connexion.
     Fishing:UpdateOneKey()
 end)

@@ -1,5 +1,17 @@
 # Bubulle
 
+## 1.1.0
+
+**English**
+
+- The fishing key now also appears in the game's menu: Options > Key Bindings > AddOns > Bubulle. Change it there or in Bubulle's Settings tab, both stay in sync.
+- New license file (MIT).
+
+**Français**
+
+- La touche de pêche apparaît aussi dans le menu du jeu : Options > Raccourcis > AddOns > Bubulle. Tu peux la changer là ou dans l'onglet Réglages de Bubulle, les deux restent synchronisés.
+- Ajout du fichier de licence (MIT).
+
 ## 1.0.0 (2026-11-10)
 
 First public release. / Première version publique.

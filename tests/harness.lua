@@ -100,6 +100,12 @@ _G.InCombatLockdown = function() return false end
 _G.SetOverrideBindingClick = function(owner, prio, key, btn) bindings[key] = "CLICK "..btn; log("bind "..key.." -> "..btn) end
 _G.SetOverrideBinding = function(owner, prio, key, cmd) bindings[key] = cmd; log("bind "..key.." -> "..cmd) end
 _G.ClearOverrideBindings = function(owner) log("clear bindings") end
+local gameBindings = {}
+_G.SetBinding = function(key, cmd) gameBindings[key] = cmd; return true end
+_G.GetBindingAction = function(key) return gameBindings[key] or "" end
+_G.GetBindingKey = function(cmd) local out = {}; for k, c in pairs(gameBindings) do if c == cmd then out[#out+1] = k end end; table.sort(out); return unpack(out) end
+_G.SaveBindings = function() end
+_G.GetCurrentBindingSet = function() return 2 end
 _G.GetMouseFoci = function() return { WorldFrame } end
 _G.IsModifierKeyDown = function() return false end
 _G.IsFlying = function() return false end
@@ -180,6 +186,16 @@ step("welcome on first open", function() advance(5); assert(not BubulleWindow, "
   assert(BubulleWindow.tabs:GetWidth() > 0, "tabs width")
   BubulleWindow.welcome.keyButton:Fire("OnClick","LeftButton"); BubulleWindow.welcome.keyButton:Fire("OnKeyDown","F")
   assert(ns.db.settings.oneKey=="F"); assert(bindings.F=="CLICK BubulleCastButton", "always-on key not bound") ; ns.db.settings.oneKey=false; ns.Fishing:RefreshSettings(); bindings.F=nil; ns.db.welcomed=true; BubulleWindow.welcome:Hide() end)
+step("game key binding sync", function()
+  -- choisir F dans Bubulle la range dans le menu Raccourcis du jeu
+  ns.Fishing:SetKey("F"); assert(gameBindings.F == "BUBULLE_FISH", "game binding not saved")
+  -- changer la touche dans le menu du jeu met Bubulle à jour
+  gameBindings.F = nil; gameBindings.H = "BUBULLE_FISH"; fire("UPDATE_BINDINGS")
+  assert(ns.db.settings.oneKey == "H", "oneKey "..tostring(ns.db.settings.oneKey))
+  -- l'effacer dans Bubulle la retire du menu du jeu
+  ns.Fishing:SetKey(false); assert(gameBindings.H == nil); assert(ns.db.settings.oneKey == false)
+  Bubulle_OnFishKey(); assert(ns.Fishing.active, "key should start fishing mode"); ns.Fishing:SetActive(false)
+end)
 step("open window session", function() SlashCmdList.BUBULLE("") end)
 step("journal tab empty", function() ns.Window:Open("journal") end)
 step("options tab", function() ns.Window:Open("options") end)
