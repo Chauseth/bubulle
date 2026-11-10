@@ -6,6 +6,8 @@
 
     Pour corriger une phrase ou en ajouter, c'est ici que ça se passe.
     Les "%s" et "%d" sont remplacés par des valeurs (un nom, un nombre).
+    "|4prise:prises;" laisse le jeu choisir le singulier ou le pluriel
+    selon le nombre juste avant ("1 prise", "3 prises").
     Les répliques de Bubulle sont des listes : il en choisit une au hasard.
 ]]
 
@@ -65,9 +67,9 @@ local enUS = {
     SESSION_WHERE = "%s · since %s",
     SESSION_SINCE = "Since %s",
     SESSION_RECENT = "Latest catches",
-    SESSION_LIST_SUB = "%d kinds, %d items",
+    SESSION_LIST_SUB = "%d |4kind:kinds;, %d |4item:items;",
     STAT_SKILL = "Skill",
-    JOURNAL_ZONES_SUB = "%d places visited",
+    JOURNAL_ZONES_SUB = "%d |4place:places; visited",
     OPT_TITLE_LEFT = "How you fish",
     OPT_TITLE_RIGHT = "Sound and display",
     AGO_NOW = "just now",
@@ -81,7 +83,7 @@ local enUS = {
     SESSION_LIST = "This session's catches",
     SESSION_EMPTY = "Nothing yet. Double right-click near the water to cast your line!",
     SUMMARY_EMPTY = "Ready when you are! Find some water and double right-click to cast.",
-    SUMMARY = "Nice session! %d catches in %s.\nMost frequent: %s.",
+    SUMMARY = "Nice session! %d |4catch:catches; in %s.\nMost frequent: %s.",
     BTN_START = "Start fishing",
     BTN_STOP = "Stop fishing",
     BTN_NEW_SESSION = "New session",
@@ -90,10 +92,10 @@ local enUS = {
     JOURNAL_ALL = "All zones",
     JOURNAL_NO_ZONE = "Your fishing spots will be listed here.",
     JOURNAL_EMPTY = "No catch recorded here yet.",
-    JOURNAL_TOTALS = "All time: %d catches · %d casts · %s fishing · %d different items",
-    ZONE_ROW = "%d catches · %d items",
-    ZONE_DETAIL = "%d catches · %d items · %d kinds · last visit %s",
-    ZONE_DETAIL_ALL = "%d catches · %d items · %d kinds · %d zones",
+    JOURNAL_TOTALS = "All time: %d |4catch:catches; · %d |4cast:casts; · %s fishing · %d different |4item:items;",
+    ZONE_ROW = "%d |4catch:catches; · %d |4item:items;",
+    ZONE_DETAIL = "%d |4catch:catches; · %d |4item:items; · %d |4kind:kinds; · last visit %s",
+    ZONE_DETAIL_ALL = "%d |4catch:catches; · %d |4item:items; · %d |4kind:kinds; · %d |4zone:zones;",
 
     -- Options
     SECTION_CAST = "Casting",
@@ -190,7 +192,7 @@ local enUS = {
     SAY_NEW = "Whoa! A new species: %s!",
     SAY_RARE = "Wow, %s! What a catch!",
     SAY_MILESTONE = "Already %d catches this session!",
-    SAY_ZONE_KNOWN = "Back in %s! %d catches here in your journal.",
+    SAY_ZONE_KNOWN = "Back in %s! %d |4catch:catches; here in your journal.",
     SAY_ZONE_NEW = "%s... new waters! Let's see what lives here.",
 }
 
@@ -247,9 +249,9 @@ local frFR = {
     SESSION_WHERE = "%s · depuis %s",
     SESSION_SINCE = "Depuis %s",
     SESSION_RECENT = "Dernières prises",
-    SESSION_LIST_SUB = "%d sortes, %d objets",
+    SESSION_LIST_SUB = "%d |4sorte:sortes;, %d |4objet:objets;",
     STAT_SKILL = "Compétence",
-    JOURNAL_ZONES_SUB = "%d coins visités",
+    JOURNAL_ZONES_SUB = "%d |4coin visité:coins visités;",
     OPT_TITLE_LEFT = "Ta façon de pêcher",
     OPT_TITLE_RIGHT = "Son et affichage",
     AGO_NOW = "à l'instant",
@@ -263,7 +265,7 @@ local frFR = {
     SESSION_LIST = "Prises de la session",
     SESSION_EMPTY = "Rien pour l'instant. Double-clic droit près de l'eau pour lancer ta ligne !",
     SUMMARY_EMPTY = "Je suis prêt ! Trouve un coin d'eau et fais un double-clic droit pour lancer.",
-    SUMMARY = "Belle session ! %d prises en %s.\nLa plus fréquente : %s.",
+    SUMMARY = "Belle session ! %d |4prise:prises; en %s.\nLa plus fréquente : %s.",
     BTN_START = "Commencer à pêcher",
     BTN_STOP = "Arrêter de pêcher",
     BTN_NEW_SESSION = "Nouvelle session",
@@ -272,10 +274,10 @@ local frFR = {
     JOURNAL_ALL = "Toutes les zones",
     JOURNAL_NO_ZONE = "Tes coins de pêche s'afficheront ici.",
     JOURNAL_EMPTY = "Aucune prise enregistrée ici pour l'instant.",
-    JOURNAL_TOTALS = "Depuis toujours : %d prises · %d lancers · %s de pêche · %d objets différents",
-    ZONE_ROW = "%d prises · %d objets",
-    ZONE_DETAIL = "%d prises · %d objets · %d sortes · dernière visite le %s",
-    ZONE_DETAIL_ALL = "%d prises · %d objets · %d sortes · %d zones",
+    JOURNAL_TOTALS = "Depuis toujours : %d |4prise:prises; · %d |4lancer:lancers; · %s de pêche · %d |4objet différent:objets différents;",
+    ZONE_ROW = "%d |4prise:prises; · %d |4objet:objets;",
+    ZONE_DETAIL = "%d |4prise:prises; · %d |4objet:objets; · %d |4sorte:sortes; · dernière visite le %s",
+    ZONE_DETAIL_ALL = "%d |4prise:prises; · %d |4objet:objets; · %d |4sorte:sortes; · %d |4zone:zones;",
 
     SECTION_CAST = "Lancer",
     SECTION_BEHAVIOUR = "Comportement",
@@ -366,7 +368,7 @@ local frFR = {
     SAY_NEW = "Oh ! Une nouvelle espèce : %s !",
     SAY_RARE = "Waouh, %s ! Quelle prise !",
     SAY_MILESTONE = "Déjà %d prises pendant cette session !",
-    SAY_ZONE_KNOWN = "Retour à %s ! %d prises ici dans ton carnet.",
+    SAY_ZONE_KNOWN = "Retour à %s ! %d |4prise:prises; ici dans ton carnet.",
     SAY_ZONE_NEW = "%s... de nouvelles eaux ! Voyons qui vit ici.",
 }
 

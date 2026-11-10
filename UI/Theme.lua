@@ -64,6 +64,10 @@ Theme.FONT_TEXT   = MEDIA .. "Fonts\\Alegreya-Regular.ttf"
 Theme.FONT_ITALIC = MEDIA .. "Fonts\\Alegreya-Italic.ttf"
 Theme.FONT_BOLD   = MEDIA .. "Fonts\\Alegreya-Bold.ttf"
 Theme.FONT_TITLE  = MEDIA .. "Fonts\\AlegreyaSC-Bold.ttf"
+-- Les chiffres : Alegreya dessine ses chiffres "à l'ancienne" (le 0 ressemble
+-- à un o), on prend donc la police du jeu pour les nombres.
+Theme.FONT_NUMBER = STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF"
+
 -- La "voix" de Bubulle. L'écriture manuscrite (Caveat) était peu lisible
 -- en jeu : il parle donc en italique. Pour revenir à l'écriture à la main,
 -- remplacer par MEDIA .. "Fonts\\Caveat-Bold.ttf" et HAND_SIZE par 20.
@@ -99,9 +103,9 @@ Theme.font = {
     tiny        = MakeFont("BubulleFontTiny",    Theme.FONT_ITALIC, 12, c.inkFaint),
     hand        = MakeFont("BubulleFontHand",    Theme.FONT_HAND,   HAND_SIZE + 3, c.water),
     handSmall   = MakeFont("BubulleFontHandSm",  Theme.FONT_HAND,   HAND_SIZE, c.water),
-    number      = MakeFont("BubulleFontNumber",  Theme.FONT_BOLD,   22, c.ink),
-    numberSmall = MakeFont("BubulleFontNumSm",   Theme.FONT_BOLD,   17, c.ink),
-    numberTiny  = MakeFont("BubulleFontNumTiny", Theme.FONT_BOLD,   12, c.ink, "OUTLINE"),
+    number      = MakeFont("BubulleFontNumber",  Theme.FONT_NUMBER, 19, c.ink),
+    numberSmall = MakeFont("BubulleFontNumSm",   Theme.FONT_NUMBER, 14, c.ink),
+    numberTiny  = MakeFont("BubulleFontNumTiny", Theme.FONT_NUMBER, 11, c.ink, "OUTLINE"),
     button      = MakeFont("BubulleFontButton",  Theme.FONT_TITLE,  13, c.gold),
 }
 

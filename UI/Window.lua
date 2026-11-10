@@ -260,7 +260,7 @@ local function BuildSessionSpread(spread, left, right)
     spread.list = W.List(right, 46, CreateFishRow, UpdateFishRow)
     spread.list:SetPoint("TOPLEFT", 0, -88)
     spread.list:SetPoint("BOTTOMRIGHT", spread.reset, "TOPRIGHT", 12, 14)
-    spread.list:SetEmptyText(L.SESSION_EMPTY)
+    spread.list:SetEmptyText(L.HUD_NO_CATCH)
 end
 
 local function RefreshSessionSpread(spread)

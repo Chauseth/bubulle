@@ -146,7 +146,7 @@ function W.LedgerRow(parent, label)
     row.label:SetText(label)
     row.extra = W.Text(row, Theme.font.small, "RIGHT")
     row.extra:SetPoint("RIGHT", 0, 0)
-    row.value = W.Text(row, Theme.font.bold, "RIGHT")
+    row.value = W.Text(row, Theme.font.numberSmall, "RIGHT")
     row.value:SetPoint("RIGHT", row.extra, "LEFT", 0, 0)
     -- Les points de conduite : un texte très long, coupé à la bonne
     -- largeur par le jeu (qui ajoute lui-même "..." : encore des points !).
@@ -429,7 +429,7 @@ function W.Slider(parent, label, minValue, maxValue, step, formatter, get, set)
     holder.label:SetPoint("TOPLEFT", 0, 0)
     holder.label:SetText(label)
 
-    holder.value = W.Text(holder, Theme.font.bold, "RIGHT")
+    holder.value = W.Text(holder, Theme.font.numberSmall, "RIGHT")
     holder.value:SetPoint("TOPRIGHT", 0, 0)
     Theme.Paint(holder.value, c.gold)
 
