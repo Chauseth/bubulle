@@ -10,6 +10,14 @@ Fishing addon for **WoW Forever** (client 1.60.1).
 
 Bubulle lets you cast and hook with the same key, makes the bobber splash louder while you fish, and keeps track of what you catch in each zone. A small goldfish named Bubulle sits next to your screen and comments on your fishing now and then.
 
+<p align="center">
+  <img src="docs/screenshots/journal.png" width="720" alt="The fishing journal">
+</p>
+<p align="center">
+  <img src="docs/screenshots/session.png" width="470" alt="Today's session">
+  <img src="docs/screenshots/hud.png" width="240" alt="The panel while fishing">
+</p>
+
 ## What it does
 
 **One key to cast and hook.** You pick a key the first time you open Bubulle. Press it to cast, then press it again when the bobber splashes. You can also cast with a double right-click on the water.

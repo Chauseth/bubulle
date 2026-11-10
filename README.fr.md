@@ -10,6 +10,14 @@ Addon de pêche pour **WoW Forever** (client 1.60.1).
 
 Bubulle permet de lancer et de ferrer avec la même touche, monte le son du bouchon pendant la pêche, et note ce que tu attrapes dans chaque zone. Un petit poisson rouge, Bubulle, se tient à côté de ton écran et commente ta pêche de temps en temps.
 
+<p align="center">
+  <img src="docs/screenshots/journal.png" width="720" alt="Le carnet de pêche">
+</p>
+<p align="center">
+  <img src="docs/screenshots/session.png" width="470" alt="La session du jour">
+  <img src="docs/screenshots/hud.png" width="240" alt="Le panneau pendant la pêche">
+</p>
+
 ## Ce qu'il fait
 
 **Une touche pour lancer et ferrer.** Tu choisis ta touche la première fois que tu ouvres Bubulle. Une pression pour lancer, une autre quand le bouchon fait plouf. Tu peux aussi lancer d'un double-clic droit sur l'eau.
