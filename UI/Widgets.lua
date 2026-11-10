@@ -1,12 +1,11 @@
 --[[
     Bubulle - UI/Widgets.lua
     ------------------------------------------------------------------
-    Une petite "boîte à outils" d'éléments d'interface réutilisables :
-    boutons, cases à cocher, curseurs, onglets, listes défilantes...
+    La "boîte à outils" du carnet : textes, filets dorés, boutons,
+    cases à cocher, curseurs, onglets en marque-page, listes...
 
-    Pourquoi ne pas utiliser les modèles de Blizzard ? Pour avoir un
-    style homogène et moderne, entièrement maîtrisé. Chaque fonction
-    ci-dessous fabrique un élément et le renvoie, prêt à placer.
+    Chaque fonction fabrique un élément et le renvoie, prêt à placer.
+    Toutes les couleurs et polices viennent de UI/Theme.lua.
 ]]
 
 local _, ns = ...
@@ -21,10 +20,10 @@ ns.Widgets = W
 -- Bases
 ------------------------------------------------------------------------
 
---- Cadre avec fond et bordure fine.
-function W.Panel(parent, bg, border)
+--- Cadre avec fond et bordure fine (fond sombre et filet doré par défaut).
+function W.Panel(parent, bg, border, bgFile)
     local frame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
-    Theme.Backdrop(frame, bg or c.panel, border or c.border)
+    Theme.Backdrop(frame, bg, border, bgFile)
     return frame
 end
 
@@ -52,19 +51,116 @@ function W.SetTooltip(frame, title, body)
     end)
 end
 
---- Titre de section avec un trait fin dessous.
+--- Trait fin (horizontal par défaut).
+function W.Line(parent, color, thickness, layer)
+    local t = parent:CreateTexture(nil, layer or "ARTWORK")
+    Theme.Fill(t, color or c.line)
+    t:SetHeight(thickness or 1)
+    return t
+end
+
+--- Cadre de filets dorés autour d'un cadre : un filet au bord, un autre
+-- en retrait (inset), comme les pages d'un livre relié.
+function W.GiltFrame(frame, inset, color, layer)
+    local function Edge(offset, alpha)
+        local col = { color[1], color[2], color[3], (color[4] or 1) * alpha }
+        local top, bottom = W.Line(frame, col, 1, layer), W.Line(frame, col, 1, layer)
+        top:SetPoint("TOPLEFT", offset, -offset)
+        top:SetPoint("TOPRIGHT", -offset, -offset)
+        bottom:SetPoint("BOTTOMLEFT", offset, offset)
+        bottom:SetPoint("BOTTOMRIGHT", -offset, offset)
+        local left, right = W.Line(frame, col, 1, layer), W.Line(frame, col, 1, layer)
+        left:SetWidth(1)
+        right:SetWidth(1)
+        left:SetPoint("TOPLEFT", offset, -offset)
+        left:SetPoint("BOTTOMLEFT", offset, offset)
+        right:SetPoint("TOPRIGHT", -offset, -offset)
+        right:SetPoint("BOTTOMRIGHT", -offset, offset)
+    end
+    color = color or c.goldDk
+    Edge(0, 0.75)
+    if inset then
+        Edge(inset, 0.4)
+    end
+end
+
+--- Filet d'ornement : un trait, un petit losange doré, un trait.
+function W.Ornament(parent)
+    local holder = CreateFrame("Frame", nil, parent)
+    holder:SetHeight(9)
+    local diamond = holder:CreateTexture(nil, "ARTWORK")
+    diamond:SetSize(6, 6)
+    diamond:SetPoint("CENTER")
+    diamond:SetRotation(math.rad(45))
+    Theme.Fill(diamond, c.gold)
+    local left = W.Line(holder, c.line)
+    left:SetPoint("LEFT", 0, 0)
+    left:SetPoint("RIGHT", diamond, "LEFT", -8, 0)
+    local right = W.Line(holder, c.line)
+    right:SetPoint("LEFT", diamond, "RIGHT", 8, 0)
+    right:SetPoint("RIGHT", 0, 0)
+    return holder
+end
+
+--- En-tête de page : petit sur-titre doré, grand titre, sous-titre en italique.
+function W.PageHeader(parent)
+    local head = CreateFrame("Frame", nil, parent)
+    head:SetHeight(62)
+    head.kicker = W.Text(head, Theme.font.kicker)
+    head.kicker:SetPoint("TOPLEFT", 0, 0)
+    head.kicker:SetPoint("RIGHT", 0, 0)
+    head.title = W.Text(head, Theme.font.title)
+    head.title:SetPoint("TOPLEFT", head.kicker, "BOTTOMLEFT", 0, -3)
+    head.title:SetPoint("RIGHT", 0, 0)
+    head.sub = W.Text(head, Theme.font.small)
+    head.sub:SetPoint("TOPLEFT", head.title, "BOTTOMLEFT", 0, -3)
+    head.sub:SetPoint("RIGHT", 0, 0)
+
+    function head:Set(kicker, title, sub)
+        self.kicker:SetText(kicker or "")
+        self.title:SetText(title or "")
+        self.sub:SetText(sub or "")
+    end
+    return head
+end
+
+--- Titre de section avec un filet doré dessous.
 function W.SectionHeader(parent, text)
     local holder = CreateFrame("Frame", nil, parent)
     holder:SetHeight(22)
     holder.text = W.Text(holder, Theme.font.heading)
     holder.text:SetPoint("TOPLEFT", 0, 0)
     holder.text:SetText(text)
-    local line = holder:CreateTexture(nil, "ARTWORK")
-    line:SetHeight(1)
-    line:SetPoint("BOTTOMLEFT", 0, 4)
-    line:SetPoint("BOTTOMRIGHT", 0, 4)
-    Theme.Fill(line, c.border)
+    local line = W.Line(holder, c.line)
+    line:SetPoint("BOTTOMLEFT", 0, 3)
+    line:SetPoint("BOTTOMRIGHT", 0, 3)
     return holder
+end
+
+--- Ligne de registre : "Prises ........ 24" (les points s'adaptent seuls).
+function W.LedgerRow(parent, label)
+    local row = CreateFrame("Frame", nil, parent)
+    row:SetHeight(24)
+    row.label = W.Text(row, Theme.font.body)
+    row.label:SetPoint("LEFT", 0, 0)
+    row.label:SetText(label)
+    row.extra = W.Text(row, Theme.font.small, "RIGHT")
+    row.extra:SetPoint("RIGHT", 0, 0)
+    row.value = W.Text(row, Theme.font.bold, "RIGHT")
+    row.value:SetPoint("RIGHT", row.extra, "LEFT", 0, 0)
+    -- Les points de conduite : un texte très long, coupé à la bonne
+    -- largeur par le jeu (qui ajoute lui-même "..." : encore des points !).
+    row.leader = W.Text(row, Theme.font.small)
+    row.leader:SetPoint("LEFT", row.label, "RIGHT", 4, -2)
+    row.leader:SetPoint("RIGHT", row.value, "LEFT", -4, -2)
+    row.leader:SetText(string.rep(". ", 80))
+    Theme.Paint(row.leader, { c.inkFaint[1], c.inkFaint[2], c.inkFaint[3], 0.55 })
+
+    function row:Set(value, extra)
+        self.value:SetText(value)
+        self.extra:SetText(extra and ("  " .. extra) or "")
+    end
+    return row
 end
 
 ------------------------------------------------------------------------
@@ -136,31 +232,31 @@ function W.RestorePosition(frame, key, point, relativePoint, x, y)
 end
 
 ------------------------------------------------------------------------
--- Boutons
+-- Boutons : cuir sombre, filet doré, lettres dorées
 ------------------------------------------------------------------------
 local function ButtonColors(button)
+    local hover = button.hover
     if button.primary then
-        local base = button.hover and c.accentHi or c.accent
-        button:SetBackdropColor(base[1], base[2], base[3], 1)
-        button:SetBackdropBorderColor(base[1], base[2], base[3], 1)
-        button.label:SetTextColor(0.04, 0.09, 0.10)
+        button:SetBackdropColor(hover and 0.42 or 0.34, hover and 0.27 or 0.21, hover and 0.11 or 0.08, 1)
+        button:SetBackdropBorderColor(c.gold[1], c.gold[2], c.gold[3], 1)
+        Theme.Paint(button.label, hover and c.ink or c.gold)
     else
-        local bg = button.hover and c.panelHi or c.panel
-        local border = button.hover and c.accent or c.border
+        local bg = hover and c.tabHi or c.tab
         button:SetBackdropColor(bg[1], bg[2], bg[3], 1)
-        button:SetBackdropBorderColor(border[1], border[2], border[3], 1)
-        Theme.Paint(button.label, button.hover and c.text or { 0.80, 0.85, 0.88, 1 })
+        local border = hover and c.gold or c.goldDk
+        button:SetBackdropBorderColor(border[1], border[2], border[3], hover and 1 or 0.7)
+        Theme.Paint(button.label, hover and c.gold or c.inkSoft)
     end
 end
 
---- Bouton plat. style = "primary" pour le bouton principal (orange).
+--- Bouton. style = "primary" pour le bouton principal.
 function W.Button(parent, text, width, height, style)
     local button = CreateFrame("Button", nil, parent, "BackdropTemplate")
-    button:SetSize(width or 110, height or 24)
+    button:SetSize(width or 110, height or 26)
     button:SetBackdrop({ bgFile = Theme.WHITE, edgeFile = Theme.WHITE, edgeSize = 1 })
     button.primary = style == "primary"
 
-    button.label = W.Text(button, Theme.font.body, "CENTER")
+    button.label = W.Text(button, Theme.font.button, "CENTER")
     button.label:SetPoint("CENTER", 0, 0)
     button.label:SetText(text or "")
 
@@ -199,21 +295,16 @@ function W.Button(parent, text, width, height, style)
     return button
 end
 
---- Petit bouton icône dessiné à la main : "close" (croix) ou "menu" (3 traits).
+--- Petit bouton tracé à l'encre : "close" (croix) ou "menu" (3 traits).
 function W.GlyphButton(parent, kind, size)
     size = size or 18
     local button = CreateFrame("Button", nil, parent)
     button:SetSize(size, size)
 
-    local bg = button:CreateTexture(nil, "BACKGROUND")
-    bg:SetAllPoints()
-    Theme.Fill(bg, c.panelHi)
-    bg:Hide()
-
     local strokes = {}
     local function Stroke()
         local t = button:CreateTexture(nil, "ARTWORK")
-        Theme.Fill(t, c.muted)
+        Theme.Fill(t, c.inkFaint)
         strokes[#strokes + 1] = t
         return t
     end
@@ -237,43 +328,57 @@ function W.GlyphButton(parent, kind, size)
     local function Tint(color)
         for _, t in ipairs(strokes) do Theme.Fill(t, color) end
     end
-    button:SetScript("OnEnter", function()
-        bg:Show()
-        Tint(kind == "close" and c.danger or c.text)
-    end)
-    button:SetScript("OnLeave", function()
-        bg:Hide()
-        Tint(c.muted)
-    end)
+    button:SetScript("OnEnter", function() Tint(kind == "close" and c.danger or c.gold) end)
+    button:SetScript("OnLeave", function() Tint(c.inkFaint) end)
+    return button
+end
+
+--- Bouton rond en laiton avec une croix (fermer la fenêtre du carnet).
+function W.BrassClose(parent, size)
+    size = size or 28
+    local button = CreateFrame("Button", nil, parent)
+    button:SetSize(size, size)
+    local disc = button:CreateTexture(nil, "ARTWORK")
+    disc:SetAllPoints()
+    disc:SetTexture(Theme.tex.button)
+    for _, angle in ipairs({ 45, -45 }) do
+        local t = button:CreateTexture(nil, "OVERLAY")
+        t:SetSize(size * 0.42, 2)
+        t:SetPoint("CENTER")
+        t:SetRotation(math.rad(angle))
+        t:SetColorTexture(0.29, 0.20, 0.07, 1)
+    end
+    button:SetScript("OnEnter", function() disc:SetVertexColor(1.15, 1.1, 1, 1) end)
+    button:SetScript("OnLeave", function() disc:SetVertexColor(1, 1, 1, 1) end)
     return button
 end
 
 ------------------------------------------------------------------------
--- Case à cocher
+-- Case à cocher : petite case sombre, coche dorée
 ------------------------------------------------------------------------
 function W.Checkbox(parent, label, tooltip, get, set)
     local button = CreateFrame("Button", nil, parent)
-    button:SetHeight(20)
+    button:SetHeight(22)
 
     local box = CreateFrame("Frame", nil, button, "BackdropTemplate")
-    box:SetSize(16, 16)
+    box:SetSize(15, 15)
     box:SetPoint("LEFT", 0, 0)
-    Theme.Backdrop(box, c.track, c.border)
+    Theme.Backdrop(box, c.pageDk, c.goldDk)
 
     local mark = box:CreateTexture(nil, "OVERLAY")
-    mark:SetPoint("TOPLEFT", 3, -3)
-    mark:SetPoint("BOTTOMRIGHT", -3, 3)
-    Theme.Fill(mark, c.accent)
+    mark:SetSize(22, 22)
+    mark:SetPoint("CENTER", 1, 1)
+    mark:SetTexture(Theme.tex.check)
 
     button.text = W.Text(button, Theme.font.body)
-    button.text:SetPoint("LEFT", box, "RIGHT", 8, 0)
+    button.text:SetPoint("LEFT", box, "RIGHT", 9, 0)
     button.text:SetPoint("RIGHT", 0, 0)
     button.text:SetText(label)
 
     function button:Refresh()
         local on = get() and true or false
         mark:SetShown(on)
-        Theme.Paint(self.text, on and c.text or { 0.75, 0.80, 0.83, 1 })
+        Theme.Paint(self.text, on and c.ink or c.inkSoft)
     end
 
     function button:SetActive(enabled)
@@ -288,10 +393,10 @@ function W.Checkbox(parent, label, tooltip, get, set)
         self:Refresh()
     end)
     button:SetScript("OnEnter", function()
-        box:SetBackdropBorderColor(c.accent[1], c.accent[2], c.accent[3], 1)
+        box:SetBackdropBorderColor(c.gold[1], c.gold[2], c.gold[3], 1)
     end)
     button:SetScript("OnLeave", function()
-        box:SetBackdropBorderColor(c.border[1], c.border[2], c.border[3], 1)
+        box:SetBackdropBorderColor(c.goldDk[1], c.goldDk[2], c.goldDk[3], 1)
     end)
     if tooltip then
         W.SetTooltip(button, label, tooltip)
@@ -302,25 +407,25 @@ function W.Checkbox(parent, label, tooltip, get, set)
 end
 
 ------------------------------------------------------------------------
--- Curseur (slider)
+-- Curseur : un filet doré et un petit losange qu'on fait glisser
 ------------------------------------------------------------------------
 function W.Slider(parent, label, minValue, maxValue, step, formatter, get, set)
     local holder = CreateFrame("Frame", nil, parent)
-    holder:SetHeight(40)
+    holder:SetHeight(42)
 
-    holder.label = W.Text(holder, Theme.font.small)
+    holder.label = W.Text(holder, Theme.font.body)
     holder.label:SetPoint("TOPLEFT", 0, 0)
     holder.label:SetText(label)
 
-    holder.value = W.Text(holder, Theme.font.body, "RIGHT")
+    holder.value = W.Text(holder, Theme.font.bold, "RIGHT")
     holder.value:SetPoint("TOPRIGHT", 0, 0)
-    Theme.Paint(holder.value, c.accent)
+    Theme.Paint(holder.value, c.gold)
 
     local slider = CreateFrame("Slider", nil, holder)
     slider:SetOrientation("HORIZONTAL")
     slider:SetHeight(16)
-    slider:SetPoint("BOTTOMLEFT", 0, 2)
-    slider:SetPoint("BOTTOMRIGHT", 0, 2)
+    slider:SetPoint("BOTTOMLEFT", 0, 0)
+    slider:SetPoint("BOTTOMRIGHT", 0, 0)
     slider:SetMinMaxValues(minValue, maxValue)
     slider:SetValueStep(step)
     slider:SetObeyStepOnDrag(true)
@@ -328,21 +433,27 @@ function W.Slider(parent, label, minValue, maxValue, step, formatter, get, set)
     holder.slider = slider
 
     local track = slider:CreateTexture(nil, "BACKGROUND")
-    track:SetHeight(4)
+    track:SetHeight(1)
     track:SetPoint("LEFT")
     track:SetPoint("RIGHT")
-    Theme.Fill(track, c.track)
+    Theme.Fill(track, c.line)
 
     local thumb = slider:CreateTexture(nil, "OVERLAY")
-    thumb:SetSize(8, 14)
-    Theme.Fill(thumb, c.text)
+    thumb:SetSize(14, 14)
+    thumb:SetColorTexture(0, 0, 0, 0) -- zone de prise, invisible
     slider:SetThumbTexture(thumb)
 
+    local diamond = slider:CreateTexture(nil, "OVERLAY", nil, 2)
+    diamond:SetSize(9, 9)
+    diamond:SetPoint("CENTER", thumb, "CENTER")
+    diamond:SetRotation(math.rad(45))
+    Theme.Fill(diamond, c.gold)
+
     local fill = slider:CreateTexture(nil, "ARTWORK")
-    fill:SetHeight(4)
+    fill:SetHeight(2)
     fill:SetPoint("LEFT", track, "LEFT")
     fill:SetPoint("RIGHT", thumb, "CENTER")
-    Theme.Fill(fill, c.accent)
+    Theme.Fill(fill, c.goldDk)
 
     local function Round(value)
         return math.floor(value / step + 0.5) * step
@@ -385,7 +496,7 @@ local MODIFIER_KEYS = {
 }
 
 function W.KeyButton(parent, get, set, width)
-    local button = W.Button(parent, "", width or 140, 24)
+    local button = W.Button(parent, "", width or 140, 26)
     button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
     local function Stop(self)
@@ -398,7 +509,7 @@ function W.KeyButton(parent, get, set, width)
         if key then
             self:SetLabel(GetBindingText(key))
         else
-            self:SetLabel("|cff8b9daa" .. L.KEY_NONE .. "|r")
+            self:SetLabel("|cff" .. Theme.FAINT_HEX .. L.KEY_NONE .. "|r")
         end
     end
 
@@ -414,7 +525,7 @@ function W.KeyButton(parent, get, set, width)
             return
         end
         self.listening = true
-        self:SetLabel("|cff" .. Theme.ACCENT_HEX .. L.KEY_PRESS .. "|r")
+        self:SetLabel("|cff" .. Theme.WATER_HEX .. L.KEY_PRESS .. "|r")
         self:EnableKeyboard(true)
     end)
 
@@ -451,51 +562,58 @@ function W.KeyButton(parent, get, set, width)
 end
 
 ------------------------------------------------------------------------
--- Onglets
+-- Onglets en marque-page, empilés sur le bord droit du carnet.
+-- L'onglet choisi prend la couleur de la page et "sort" un peu plus.
 ------------------------------------------------------------------------
+local TAB_W, TAB_H, TAB_GAP, TAB_OUT = 104, 38, 6, 16
+
 function W.Tabs(parent, items, onSelect)
     local holder = CreateFrame("Frame", nil, parent)
-    holder:SetHeight(30)
+    holder:SetSize(TAB_W + TAB_OUT, #items * (TAB_H + TAB_GAP))
     holder.buttons = {}
 
-    local x = 0
-    for _, item in ipairs(items) do
-        local tab = CreateFrame("Button", nil, holder)
+    for i, item in ipairs(items) do
+        local tab = CreateFrame("Button", nil, holder, "BackdropTemplate")
         tab.key = item.key
-        tab.text = W.Text(tab, Theme.font.body, "CENTER")
-        tab.text:SetPoint("CENTER", 0, 1)
+        tab:SetSize(TAB_W, TAB_H)
+        tab.y = -(i - 1) * (TAB_H + TAB_GAP)
+        tab:SetPoint("TOPLEFT", 0, tab.y)
+        tab.text = W.Text(tab, Theme.font.button, "LEFT")
+        tab.text:SetPoint("LEFT", 22, 0)
         tab.text:SetText(item.label)
-        local width = math.max(80, math.ceil(tab.text:GetStringWidth()) + 28)
-        tab:SetSize(width, 30)
-        tab:SetPoint("BOTTOMLEFT", x, 0)
-        x = x + width
-
-        tab.underline = tab:CreateTexture(nil, "OVERLAY")
-        tab.underline:SetHeight(2)
-        tab.underline:SetPoint("BOTTOMLEFT", 8, 0)
-        tab.underline:SetPoint("BOTTOMRIGHT", -8, 0)
-        Theme.Fill(tab.underline, c.accent)
 
         tab:SetScript("OnClick", function()
             ns.PlayUISound("IG_CHARACTER_INFO_TAB")
             holder:Select(item.key)
         end)
         tab:SetScript("OnEnter", function(self)
-            if holder.selected ~= self.key then Theme.Paint(self.text, c.text) end
+            if holder.selected ~= self.key then Theme.Paint(self.text, c.gold) end
         end)
         tab:SetScript("OnLeave", function(self)
-            if holder.selected ~= self.key then Theme.Paint(self.text, c.muted) end
+            if holder.selected ~= self.key then Theme.Paint(self.text, c.inkSoft) end
         end)
-        holder.buttons[#holder.buttons + 1] = tab
+        holder.buttons[i] = tab
     end
-    holder:SetWidth(x) -- sans largeur, les onglets ne s'affichent pas
 
     function holder:Select(key)
         self.selected = key
         for _, tab in ipairs(self.buttons) do
-            local isSelected = tab.key == key
-            tab.underline:SetShown(isSelected)
-            Theme.Paint(tab.text, isSelected and c.text or c.muted)
+            local on = tab.key == key
+            if on then
+                Theme.Backdrop(tab, nil, c.goldDk, Theme.tex.page)
+                tab:SetWidth(TAB_W + TAB_OUT)
+                tab:SetPoint("TOPLEFT", -TAB_OUT, tab.y)
+                tab.text:SetPoint("LEFT", 22 + TAB_OUT, 0)
+                Theme.Paint(tab.text, c.gold)
+                tab:SetFrameLevel(holder:GetFrameLevel() + 2)
+            else
+                Theme.Backdrop(tab, c.tab, { c.goldDk[1], c.goldDk[2], c.goldDk[3], 0.5 })
+                tab:SetWidth(TAB_W)
+                tab:SetPoint("TOPLEFT", 0, tab.y)
+                tab.text:SetPoint("LEFT", 22, 0)
+                Theme.Paint(tab.text, c.inkSoft)
+                tab:SetFrameLevel(holder:GetFrameLevel() + 1)
+            end
         end
         onSelect(key)
     end
@@ -504,65 +622,34 @@ function W.Tabs(parent, items, onSelect)
 end
 
 ------------------------------------------------------------------------
--- Tuile de statistique (gros chiffre + libellé)
-------------------------------------------------------------------------
-function W.StatTile(parent, label)
-    local tile = W.Panel(parent)
-
-    tile.value = W.Text(tile, Theme.font.number)
-    tile.value:SetPoint("TOPLEFT", 12, -10)
-    tile.value:SetText("0")
-
-    tile.label = W.Text(tile, Theme.font.tiny)
-    tile.label:SetPoint("BOTTOMLEFT", 12, 9)
-    tile.label:SetText(label)
-
-    tile.sub = W.Text(tile, Theme.font.tiny, "RIGHT")
-    tile.sub:SetPoint("BOTTOMRIGHT", -10, 9)
-
-    local stripe = tile:CreateTexture(nil, "ARTWORK")
-    stripe:SetPoint("TOPLEFT", 1, -1)
-    stripe:SetPoint("TOPRIGHT", -1, -1)
-    stripe:SetHeight(2)
-    Theme.Fill(stripe, c.accentDim)
-
-    function tile:SetValue(value, sub)
-        self.value:SetText(value)
-        self.sub:SetText(sub or "")
-    end
-
-    return tile
-end
-
-------------------------------------------------------------------------
--- Barre de progression
+-- Barre de progression (fine, dorée)
 ------------------------------------------------------------------------
 function W.Bar(parent, height)
     local bar = CreateFrame("StatusBar", nil, parent)
-    bar:SetHeight(height or 6)
+    bar:SetHeight(height or 3)
     bar:SetStatusBarTexture(Theme.WHITE)
-    local fillColor = c.accent
-    bar:SetStatusBarColor(fillColor[1], fillColor[2], fillColor[3], 1)
+    bar:SetStatusBarColor(c.goldDk[1], c.goldDk[2], c.goldDk[3], 1)
     bar:SetMinMaxValues(0, 1)
     bar:SetValue(0)
 
     bar.bg = bar:CreateTexture(nil, "BACKGROUND")
     bar.bg:SetAllPoints()
-    Theme.Fill(bar.bg, c.track)
+    Theme.Fill(bar.bg, c.lineFaint)
     return bar
 end
 
 ------------------------------------------------------------------------
--- Icône d'objet avec bordure de qualité, quantité et info-bulle
+-- Icône d'objet : cadre doré (couleur de qualité si l'objet est au moins
+-- peu commun), quantité et info-bulle
 ------------------------------------------------------------------------
 function W.ItemIcon(parent, size)
     local frame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     frame:SetSize(size, size)
-    Theme.Backdrop(frame, c.track, c.border)
+    Theme.Backdrop(frame, c.pageDk, c.goldDk)
 
     frame.icon = frame:CreateTexture(nil, "ARTWORK")
-    frame.icon:SetPoint("TOPLEFT", 1, -1)
-    frame.icon:SetPoint("BOTTOMRIGHT", -1, 1)
+    frame.icon:SetPoint("TOPLEFT", 2, -2)
+    frame.icon:SetPoint("BOTTOMRIGHT", -2, 2)
     frame.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
     frame.count = W.Text(frame, Theme.font.numberTiny, "RIGHT")
@@ -582,11 +669,12 @@ function W.ItemIcon(parent, size)
     function frame:SetItem(itemID, texture, quality, count)
         self.itemID = itemID
         self.icon:SetTexture(texture or C_Item.GetItemIconByID(itemID) or 134400)
-        local r, g, b = ns.QualityRGB(quality)
-        if (quality or 1) <= 1 then
-            r, g, b = c.border[1], c.border[2], c.border[3]
+        if (quality or 1) >= 2 then
+            local r, g, b = ns.QualityRGB(quality)
+            self:SetBackdropBorderColor(r, g, b, 0.9)
+        else
+            self:SetBackdropBorderColor(c.goldDk[1], c.goldDk[2], c.goldDk[3], 0.8)
         end
-        self:SetBackdropBorderColor(r, g, b, 1)
         self.count:SetText((count and count > 1) and count or "")
     end
 
@@ -607,7 +695,7 @@ function W.List(parent, rowHeight, createRow, updateRow)
 
     local bar = CreateFrame("Slider", nil, list)
     bar:SetOrientation("VERTICAL")
-    bar:SetWidth(4)
+    bar:SetWidth(5)
     bar:SetPoint("TOPRIGHT", 0, 0)
     bar:SetPoint("BOTTOMRIGHT", 0, 0)
     bar:SetValueStep(1)
@@ -615,12 +703,14 @@ function W.List(parent, rowHeight, createRow, updateRow)
     bar:SetMinMaxValues(0, 0)
 
     local track = bar:CreateTexture(nil, "BACKGROUND")
-    track:SetAllPoints()
-    Theme.Fill(track, c.track)
+    track:SetWidth(1)
+    track:SetPoint("TOP")
+    track:SetPoint("BOTTOM")
+    Theme.Fill(track, c.line)
 
     local thumb = bar:CreateTexture(nil, "OVERLAY")
-    thumb:SetSize(4, 24)
-    Theme.Fill(thumb, c.muted)
+    thumb:SetSize(5, 24)
+    Theme.Fill(thumb, c.goldDk)
     bar:SetThumbTexture(thumb)
 
     list.empty = W.Text(list, Theme.font.small, "CENTER")
@@ -657,7 +747,7 @@ function W.List(parent, rowHeight, createRow, updateRow)
                 row = createRow(self)
                 row:SetHeight(rowHeight)
                 row:SetPoint("TOPLEFT", 0, -(i - 1) * rowHeight)
-                row:SetPoint("RIGHT", self, "RIGHT", -10, 0)
+                row:SetPoint("RIGHT", self, "RIGHT", -12, 0)
                 self.rows[i] = row
             end
         end

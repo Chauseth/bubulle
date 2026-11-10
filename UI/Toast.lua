@@ -22,29 +22,40 @@ local busy = false
 
 local function Build()
     frame = CreateFrame("Frame", "BubulleToast", UIParent, "BackdropTemplate")
-    frame:SetSize(330, 64)
+    frame:SetSize(340, 66)
     frame:SetPoint("TOP", UIParent, "TOP", 0, -150)
     frame:SetFrameStrata("HIGH")
-    Theme.Backdrop(frame, c.bg, c.accent)
+    Theme.Backdrop(frame, nil, { c.goldDk[1], c.goldDk[2], c.goldDk[3], 0.8 }, Theme.tex.page)
     frame:Hide()
     W.AttachFader(frame, 0.25)
 
-    -- Portrait rond de Bubulle
+    -- Liseré orange "poisson rouge" sur le bord gauche
+    local stripe = frame:CreateTexture(nil, "ARTWORK")
+    stripe:SetPoint("TOPLEFT", 1, -1)
+    stripe:SetPoint("BOTTOMLEFT", 1, 1)
+    stripe:SetWidth(4)
+    Theme.Fill(stripe, c.fish)
+
+    local drop = frame:CreateTexture(nil, "BACKGROUND", nil, -8)
+    drop:SetPoint("TOPLEFT", -2, 1)
+    drop:SetPoint("BOTTOMRIGHT", 4, -5)
+    drop:SetColorTexture(0, 0, 0, 0.4)
+
+    -- Bubulle dans sa bulle
     frame.portrait = frame:CreateTexture(nil, "ARTWORK")
-    frame.portrait:SetSize(46, 46)
-    frame.portrait:SetPoint("LEFT", 9, 0)
-    frame.portrait:SetMask("Interface\\CharacterFrame\\TempPortraitAlphaMask")
+    frame.portrait:SetSize(48, 48)
+    frame.portrait:SetPoint("LEFT", 12, 0)
 
-    frame.title = W.Text(frame, Theme.font.heading)
-    frame.title:SetPoint("TOPLEFT", 66, -12)
-    frame.title:SetPoint("RIGHT", -48, 0)
+    frame.title = W.Text(frame, Theme.font.kicker)
+    frame.title:SetPoint("TOPLEFT", 72, -14)
+    frame.title:SetPoint("RIGHT", -52, 0)
 
-    frame.text = W.Text(frame, Theme.font.body)
-    frame.text:SetPoint("BOTTOMLEFT", 66, 13)
-    frame.text:SetPoint("RIGHT", -48, 0)
+    frame.text = W.Text(frame, Theme.font.bold)
+    frame.text:SetPoint("BOTTOMLEFT", 72, 14)
+    frame.text:SetPoint("RIGHT", -52, 0)
 
     frame.item = W.ItemIcon(frame, 34)
-    frame.item:SetPoint("RIGHT", -10, 0)
+    frame.item:SetPoint("RIGHT", -12, 0)
 
     -- Clic : ouvre le carnet
     frame:EnableMouse(true)

@@ -24,7 +24,8 @@ local session = {
     casts   = 0,   -- lancers
     catches = 0,   -- prises (une fenêtre de butin = une prise)
     items   = {},  -- [itemID] = quantité
-    recent  = {},  -- dernières prises { id, qty } (la plus récente en premier)
+    recent  = {},  -- dernières prises { id, qty, t } (la plus récente en premier)
+    started = time(), -- heure de début de la session
 }
 ns.session = session
 
@@ -32,6 +33,7 @@ function Journal:ResetSession()
     session.seconds = 0
     session.casts = 0
     session.catches = 0
+    session.started = time()
     wipe(session.items)
     wipe(session.recent)
     ns:Fire("SESSION_UPDATED")
@@ -123,7 +125,7 @@ local function RecordItem(itemID, name, quality, icon, quantity, mapID, zoneName
     zone.last = time()
 
     session.items[itemID] = (session.items[itemID] or 0) + quantity
-    table.insert(session.recent, 1, { id = itemID, qty = quantity })
+    table.insert(session.recent, 1, { id = itemID, qty = quantity, t = time() })
     while #session.recent > RECENT_MAX do
         table.remove(session.recent)
     end

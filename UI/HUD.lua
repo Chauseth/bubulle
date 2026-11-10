@@ -1,23 +1,25 @@
 --[[
     Bubulle - UI/HUD.lua
     ------------------------------------------------------------------
-    Le panneau de l'assistant, affiché pendant la pêche :
+    Le panneau affiché pendant la pêche : une fiche de papier sombre,
+    scotchée en haut, où Bubulle griffonne ses commentaires.
 
+          ▂▂▂▂▂▂ (scotch)
       ┌────────────────────────────────────────────┐
-      │ ●  Bubulle · Mode pêche                ≡ ✕ │
-      │  ╭─────╮  ┌──────────────────────────────┐ │
-      │  │ 🐠  │ ◀│ Oh ! Une nouvelle espèce :   │ │
-      │  │(img)│  │ Perche mordorée !            │ │
-      │  ╰─────╯  └──────────────────────────────┘ │
-      │ Forêt d'Elwynn · Lac Cristal               │
-      │ ███████████████░░░░░░  Bouchon à l'eau 14 s│
-      │    12        18        64        67%       │
+      │ ◆ MODE PÊCHE                           ≡ ✕ │
+      │  (Bubulle)   Ça mord !                     │
+      │              Vas-y, ferre !                │
+      │ Lac Cristal, Forêt d'Elwynn                │
+      │ Bouchon à l'eau                      12 s  │
+      │ ───────────────────●- - - - - - - - - - -  │
+      │    24        31        18       77 %       │
       │  prises   lancers   / heure   réussite     │
-      │ [■][■][■][■][■][■]   (dernières prises)    │
-      │ Session 18:42   110 (+52) / 150 · Appât 9m │
+      │ [■][■][■][■][■]     (dernières prises)     │
+      │ ────────────────────────────────────────── │
+      │ Session 18:42      110 (+52) / 150 · Appât │
       └────────────────────────────────────────────┘
 
-    Il se déplace en tirant le bandeau du haut (sauf s'il est verrouillé).
+    Il se déplace en le tirant à la souris (sauf s'il est verrouillé).
 ]]
 
 local _, ns = ...
@@ -30,26 +32,27 @@ local HUD = {}
 ns.HUD = HUD
 
 local WIDTH = 300
-local HEIGHT = 268
+local HEIGHT = 262
+local PAD = 14
 local ICONS = 7
-local ICON_SIZE = 28
-local MODEL_SIZE = 88
+local ICON_SIZE = 26
+local MODEL_SIZE = 72
 
 local frame
 
 local function BuildHeader()
-    local header = CreateFrame("Frame", nil, frame)
-    header:SetPoint("TOPLEFT", 1, -1)
-    header:SetPoint("TOPRIGHT", -1, -1)
-    header:SetHeight(26)
-    local headerBg = header:CreateTexture(nil, "BACKGROUND")
-    headerBg:SetAllPoints()
-    Theme.Fill(headerBg, c.header)
+    -- Bout de scotch qui "tient" la fiche
+    local tape = frame:CreateTexture(nil, "OVERLAY")
+    tape:SetSize(84, 20)
+    tape:SetPoint("CENTER", frame, "TOP", 18, 0)
+    tape:SetColorTexture(0.80, 0.72, 0.55, 0.38)
+    tape:SetRotation(math.rad(-2.5))
 
-    frame.dot = header:CreateTexture(nil, "ARTWORK")
-    frame.dot:SetSize(7, 7)
-    frame.dot:SetPoint("LEFT", 10, 0)
-    Theme.Fill(frame.dot, c.accent)
+    frame.dot = frame:CreateTexture(nil, "ARTWORK")
+    frame.dot:SetSize(6, 6)
+    frame.dot:SetPoint("TOPLEFT", PAD + 1, -17)
+    frame.dot:SetRotation(math.rad(45))
+    Theme.Fill(frame.dot, c.gold)
 
     local pulse = frame.dot:CreateAnimationGroup()
     pulse:SetLooping("BOUNCE")
@@ -59,15 +62,11 @@ local function BuildHeader()
     fade:SetDuration(0.6)
     frame.pulse = pulse
 
-    frame.title = W.Text(header, Theme.font.body)
-    frame.title:SetPoint("LEFT", frame.dot, "RIGHT", 8, 0)
-    frame.title:SetText("Bubulle")
+    frame.status = W.Text(frame, Theme.font.kicker)
+    frame.status:SetPoint("LEFT", frame.dot, "RIGHT", 8, 0)
 
-    frame.status = W.Text(header, Theme.font.tiny)
-    frame.status:SetPoint("LEFT", frame.title, "RIGHT", 6, 0)
-
-    local close = W.GlyphButton(header, "close", 18)
-    close:SetPoint("RIGHT", -4, 0)
+    local close = W.GlyphButton(frame, "close", 18)
+    close:SetPoint("TOPRIGHT", -8, -10)
     close:SetScript("OnClick", function()
         if ns.Fishing.active then
             ns.Fishing:SetActive(false)
@@ -77,51 +76,27 @@ local function BuildHeader()
     end)
     W.SetTooltip(close, L.HUD_CLOSE, L.HUD_CLOSE_TIP)
 
-    local menu = W.GlyphButton(header, "menu", 18)
+    local menu = W.GlyphButton(frame, "menu", 18)
     menu:SetPoint("RIGHT", close, "LEFT", -2, 0)
     menu:SetScript("OnClick", function() ns.Window:Toggle() end)
     W.SetTooltip(menu, L.HUD_JOURNAL)
 
-    W.MakeMovable(frame, "hud", header, function() return ns.db.settings.hudLocked end)
+    W.MakeMovable(frame, "hud", frame, function() return ns.db.settings.hudLocked end)
 end
 
 local function BuildAssistant()
     -- Bubulle (son illustration qui nage)
     frame.mascot = ns.Mascot:CreateModel(frame, MODEL_SIZE)
-    frame.mascot:SetPoint("TOPLEFT", 4, -28)
+    frame.mascot:SetPoint("TOPLEFT", 6, -30)
 
-    -- Bulle de dialogue
-    local bubble = W.Panel(frame, c.bubble, c.border)
-    bubble:SetPoint("TOPLEFT", MODEL_SIZE + 10, -36)
-    bubble:SetPoint("TOPRIGHT", -10, -36)
-    bubble:SetHeight(66)
-    frame.bubble = bubble
-
-    -- La petite pointe de la bulle, vers Bubulle
-    local tailHolder = CreateFrame("Frame", nil, bubble)
-    tailHolder:SetAllPoints()
-    tailHolder:SetFrameLevel(bubble:GetFrameLevel() + 2)
-    local tail = tailHolder:CreateTexture(nil, "OVERLAY")
-    tail:SetSize(10, 10)
-    tail:SetPoint("CENTER", bubble, "LEFT", 1, 0)
-    tail:SetRotation(math.rad(45))
-    Theme.Fill(tail, c.bubble)
-    local tailEdge = tailHolder:CreateTexture(nil, "ARTWORK")
-    tailEdge:SetSize(12, 12)
-    tailEdge:SetPoint("CENTER", bubble, "LEFT", 0, 0)
-    tailEdge:SetRotation(math.rad(45))
-    Theme.Fill(tailEdge, c.border)
-
-    local textHolder = CreateFrame("Frame", nil, bubble)
-    textHolder:SetAllPoints()
-    textHolder:SetFrameLevel(bubble:GetFrameLevel() + 3)
-    frame.say = W.Text(textHolder, Theme.font.body)
-    frame.say:SetPoint("TOPLEFT", 12, -8)
-    frame.say:SetPoint("BOTTOMRIGHT", -10, 8)
+    -- Ce qu'il dit, écrit à la main à côté de lui
+    frame.say = W.Text(frame, Theme.font.handSmall)
+    frame.say:SetPoint("TOPLEFT", MODEL_SIZE + 12, -34)
+    frame.say:SetPoint("RIGHT", -PAD, 0)
+    frame.say:SetHeight(64)
     frame.say:SetJustifyV("MIDDLE")
     frame.say:SetWordWrap(true)
     frame.say:SetMaxLines(3)
-    frame.say:SetSpacing(2)
 
     local appear = frame.say:CreateAnimationGroup()
     local alpha = appear:CreateAnimation("Alpha")
@@ -130,76 +105,88 @@ local function BuildAssistant()
     alpha:SetDuration(0.25)
     frame.sayAppear = appear
 
-    -- Équipement (compétence, appât) à droite, lieu à gauche
     frame.location = W.Text(frame, Theme.font.small)
-    frame.location:SetPoint("TOPLEFT", 12, -122)
-    frame.location:SetPoint("RIGHT", -12, 0)
+    frame.location:SetPoint("TOPLEFT", PAD, -106)
+    frame.location:SetPoint("RIGHT", -PAD, 0)
 end
 
 local function BuildStats()
-    -- Barre du bouchon
-    frame.bar = W.Bar(frame, 18)
-    frame.bar:SetPoint("TOPLEFT", 10, -140)
-    frame.bar:SetPoint("TOPRIGHT", -10, -140)
+    -- Le bouchon qui file le long de sa ligne
+    frame.barText = W.Text(frame, Theme.font.tiny)
+    frame.barText:SetPoint("TOPLEFT", PAD, -126)
+    frame.barText:SetPoint("RIGHT", -60, 0)
 
-    frame.barText = W.Text(frame.bar, Theme.font.tiny)
-    frame.barText:SetPoint("LEFT", 8, 0)
-    frame.barText:SetPoint("RIGHT", -44, 0)
-    Theme.Paint(frame.barText, c.text)
+    frame.barTime = W.Text(frame, Theme.font.numberSmall, "RIGHT")
+    frame.barTime:SetPoint("TOPRIGHT", -PAD, -124)
 
-    frame.barTime = W.Text(frame.bar, Theme.font.numberTiny, "RIGHT")
-    frame.barTime:SetPoint("RIGHT", -6, 0)
+    frame.bar = W.Bar(frame, 2)
+    frame.bar:SetPoint("TOPLEFT", PAD, -150)
+    frame.bar:SetPoint("TOPRIGHT", -PAD, -150)
+    frame.bar:SetStatusBarColor(c.ink[1], c.ink[2], c.ink[3], 0.85)
+
+    frame.bobber = frame.bar:CreateTexture(nil, "OVERLAY")
+    frame.bobber:SetSize(16, 16)
+    frame.bobber:SetTexture(Theme.tex.bobber)
+    frame.bobber:SetPoint("CENTER", frame.bar, "LEFT", 0, 0)
+    frame.bobber:Hide()
 
     -- Chiffres
     frame.stats = {}
     local labels = { L.STAT_CATCHES, L.STAT_CASTS, L.STAT_PER_HOUR, L.STAT_SUCCESS_SHORT }
-    local cellWidth = (WIDTH - 20) / #labels
+    local cellWidth = (WIDTH - PAD * 2) / #labels
     for i, label in ipairs(labels) do
         local value = W.Text(frame, Theme.font.numberSmall, "CENTER")
-        value:SetPoint("TOP", frame, "TOPLEFT", 10 + cellWidth * (i - 0.5), -166)
+        value:SetPoint("TOP", frame, "TOPLEFT", PAD + cellWidth * (i - 0.5), -162)
         value:SetText("0")
         local caption = W.Text(frame, Theme.font.tiny, "CENTER")
-        caption:SetPoint("TOP", value, "BOTTOM", 0, -2)
+        caption:SetPoint("TOP", value, "BOTTOM", 0, 0)
         caption:SetText(label)
         frame.stats[i] = value
     end
 
     -- Dernières prises
     frame.icons = {}
-    local gap = (WIDTH - 20 - ICONS * ICON_SIZE) / (ICONS - 1)
     for i = 1, ICONS do
         local icon = W.ItemIcon(frame, ICON_SIZE)
-        icon:SetPoint("TOPLEFT", 10 + (i - 1) * (ICON_SIZE + gap), -206)
+        icon:SetPoint("TOPLEFT", PAD + (i - 1) * (ICON_SIZE + 6), -204)
         icon:Hide()
         frame.icons[i] = icon
     end
-    frame.noCatch = W.Text(frame, Theme.font.tiny, "CENTER")
-    frame.noCatch:SetPoint("TOPLEFT", 10, -214)
-    frame.noCatch:SetPoint("TOPRIGHT", -10, -214)
+    frame.noCatch = W.Text(frame, Theme.font.tiny)
+    frame.noCatch:SetPoint("TOPLEFT", PAD, -210)
+    frame.noCatch:SetPoint("RIGHT", -PAD, 0)
     frame.noCatch:SetText(L.HUD_NO_CATCH)
 
     -- Pied
-    local divider = frame:CreateTexture(nil, "ARTWORK")
-    divider:SetHeight(1)
-    divider:SetPoint("BOTTOMLEFT", 1, 24)
-    divider:SetPoint("BOTTOMRIGHT", -1, 24)
-    Theme.Fill(divider, c.border)
+    local divider = W.Line(frame, c.line)
+    divider:SetPoint("BOTTOMLEFT", PAD, 28)
+    divider:SetPoint("BOTTOMRIGHT", -PAD, 28)
 
     frame.clock = W.Text(frame, Theme.font.tiny)
-    frame.clock:SetPoint("BOTTOMLEFT", 12, 8)
+    frame.clock:SetPoint("BOTTOMLEFT", PAD, 10)
 
     -- Compétence et appât, à droite du chrono
     frame.gear = W.Text(frame, Theme.font.tiny, "RIGHT")
-    frame.gear:SetPoint("BOTTOMRIGHT", -12, 8)
+    frame.gear:SetPoint("BOTTOMRIGHT", -PAD, 10)
 end
 
 local function Build()
     frame = CreateFrame("Frame", "BubulleHUD", UIParent, "BackdropTemplate")
     frame:SetSize(WIDTH, HEIGHT)
     frame:SetFrameStrata("MEDIUM")
-    Theme.Backdrop(frame, c.bg, c.border)
+    Theme.Backdrop(frame, nil, { 0.03, 0.02, 0.01, 1 }, Theme.tex.page)
     frame:Hide()
     W.AttachFader(frame, 0.2)
+
+    -- Filet doré intérieur et ombre portée : une vraie fiche posée à l'écran
+    local inner = CreateFrame("Frame", nil, frame)
+    inner:SetPoint("TOPLEFT", 4, -4)
+    inner:SetPoint("BOTTOMRIGHT", -4, 4)
+    W.GiltFrame(inner, nil, { c.goldDk[1], c.goldDk[2], c.goldDk[3], 0.5 }, "BORDER")
+    local drop = frame:CreateTexture(nil, "BACKGROUND", nil, -8)
+    drop:SetPoint("TOPLEFT", -3, 1)
+    drop:SetPoint("BOTTOMRIGHT", 5, -6)
+    drop:SetColorTexture(0, 0, 0, 0.4)
 
     BuildHeader()
     BuildAssistant()
@@ -241,12 +228,14 @@ function HUD:UpdateBar()
     if remaining then
         frame.bar:SetMinMaxValues(0, total)
         frame.bar:SetValue(remaining)
-        local color = remaining < 4 and c.accent or c.water
-        frame.bar:SetStatusBarColor(color[1], color[2], color[3], 1)
+        frame.bobber:SetPoint("CENTER", frame.bar, "LEFT", (frame.bar:GetWidth() or 0) * remaining / total, 0)
+        frame.bobber:Show()
+        Theme.Paint(frame.barTime, remaining < 4 and c.danger or c.ink)
         frame.barText:SetText(L.HUD_BOBBER)
-        frame.barTime:SetText(("%.1f s"):format(remaining))
+        frame.barTime:SetText(("%d s"):format(math.ceil(remaining)))
     else
         frame.bar:SetValue(0)
+        frame.bobber:Hide()
         frame.barText:SetText(ns.Fishing.active and L.HUD_READY or L.MODE_OFF)
         frame.barTime:SetText("")
     end
@@ -256,8 +245,8 @@ end
 function HUD:UpdateStatus()
     local active = ns.Fishing.active
     frame.status:SetText(active and L.MODE_ON or L.MODE_OFF)
-    Theme.Paint(frame.status, active and c.accent or c.faint)
-    Theme.Fill(frame.dot, active and c.accent or c.faint)
+    Theme.Paint(frame.status, active and c.gold or c.inkFaint)
+    Theme.Fill(frame.dot, active and c.gold or c.inkFaint)
     if ns.Fishing.channeling then
         frame.pulse:Play()
     else
@@ -269,7 +258,7 @@ end
 function HUD:UpdateLocation()
     local _, zone, subZone = ns.Journal:GetLocation()
     if subZone then
-        frame.location:SetText(zone .. "  |cff58676f·|r  " .. subZone)
+        frame.location:SetText(subZone .. ", " .. zone)
     else
         frame.location:SetText(zone)
     end
@@ -282,7 +271,7 @@ function HUD:UpdateGear()
         -- Compétence réelle, bonus entre parenthèses : "110 (+52) / 150"
         local text = tostring(rank)
         if bonus and bonus ~= 0 then
-            text = text .. (" |cff4abedb(%+d)|r"):format(bonus)
+            text = text .. (" |cff" .. Theme.WATER_HEX .. "(%+d)|r"):format(bonus)
         end
         if maxRank and maxRank > 0 then
             text = text .. " / " .. maxRank
@@ -291,10 +280,10 @@ function HUD:UpdateGear()
     end
     if ns.Fishing.OLD_SCHOOL then
         if not ns.Fishing:HasPole() then
-            parts[#parts + 1] = "|cffe66262" .. L.HUD_NO_POLE .. "|r"
+            parts[#parts + 1] = "|cffe67162" .. L.HUD_NO_POLE .. "|r"
         else
             local lure = ns.Fishing:GetLureMinutes()
-            parts[#parts + 1] = lure and L.HUD_LURE:format(lure) or ("|cff8b9daa" .. L.HUD_NO_LURE .. "|r")
+            parts[#parts + 1] = lure and L.HUD_LURE:format(lure) or ("|cff" .. Theme.FAINT_HEX .. L.HUD_NO_LURE .. "|r")
         end
     end
     frame.gear:SetText(table.concat(parts, "  ·  "))
@@ -308,7 +297,7 @@ function HUD:UpdateStats()
     frame.stats[3]:SetText(perHour and ("%d"):format(perHour) or "–")
 
     local rate = ns.Journal:SuccessRate()
-    frame.stats[4]:SetText(rate and ("%d%%"):format(rate * 100) or "–")
+    frame.stats[4]:SetText(rate and ("%d %%"):format(rate * 100) or "–")
 
     for i, icon in ipairs(frame.icons) do
         local entry = session.recent[i]
