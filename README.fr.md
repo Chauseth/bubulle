@@ -1,95 +1,63 @@
 <p align="center">
-  <img src="docs/bubulle.png" width="160" alt="Bubulle">
+  <img src="docs/bubulle.png" width="140" alt="Bubulle">
 </p>
 
-<h1 align="center">Bubulle</h1>
+# Bubulle
 
-<p align="center"><a href="README.md">Read in English</a></p>
+[English version](README.md)
 
-**Ton compagnon de pêche pour World of Warcraft.** Une seule touche pour lancer et ferrer, le plouf du bouchon enfin audible, et un carnet qui se souvient de chaque prise.
+Addon de pêche pour **WoW Forever** (client 1.60.1). Il fonctionne aussi sur Retail.
 
-Rien n'est automatisé : Bubulle rend simplement la pêche agréable. Conçu pour **WoW Forever (client 1.60.1)**, fonctionne aussi sur **Retail (12.1)**. Disponible en français et en anglais.
+Bubulle permet de lancer et de ferrer avec la même touche, monte le son du bouchon pendant la pêche, et note ce que tu attrapes dans chaque zone. Un petit poisson rouge, Bubulle, se tient à côté de ton écran et commente ta pêche de temps en temps.
 
----
+## Ce qu'il fait
 
-## 🎣 Fonctionnalités
+**Une touche pour lancer et ferrer.** Tu choisis ta touche la première fois que tu ouvres Bubulle. Une pression pour lancer, une autre quand le bouchon fait plouf. Tu peux aussi lancer d'un double-clic droit sur l'eau.
 
-### ⌨️ Une seule touche pour pêcher
-- Appuie sur ta **touche de pêche** pour lancer, puis encore une fois quand le bouchon fait plouf pour **ferrer**. Fini de chercher le bouchon avec la souris.
-- Tu préfères la souris ? **Double-clic droit** sur l'eau pour lancer. La vitesse du double-clic se règle.
-- Ta touche peut marcher partout, ou seulement en mode pêche. À toi de choisir.
+**Le plouf bien audible.** Pendant la pêche, les effets sonores montent et la musique et l'ambiance sont coupées. Tes réglages de son reviennent quand tu arrêtes, ou à ta prochaine connexion si le jeu a planté.
 
-### 🔊 Entends chaque touche
-- Pendant la pêche, Bubulle **met le bouchon en avant** : effets plus forts, musique et ambiance baissées.
-- En option : garder le son quand le jeu est en arrière-plan.
-- Quand tu arrêtes, **tes réglages de son reviennent exactement comme avant**. Même après un plantage, ils sont rétablis à ta connexion suivante.
+**Carnet de pêche.** Chaque prise est enregistrée par zone. La fenêtre montre ce que tu as pêché pendant la session, combien de poissons par heure, et combien de lancers ont vraiment rapporté quelque chose. Tu as une notification quand tu attrapes une nouvelle espèce ou un poisson rare.
 
-### 🐠 Un petit compagnon au bord de l'eau
-- Un panneau compact affiche le **temps du bouchon**, les statistiques de ta session et tes dernières prises.
-- Sur WoW Forever, il montre aussi ta **vraie compétence de pêche** (bonus entre parenthèses), la **durée restante de ton appât**, et te prévient s'il te manque une canne.
-- Bubulle commente ta pêche de temps en temps, et **saute de joie** quand tu attrapes quelque chose de nouveau.
+**Un panneau pendant la pêche.** Il affiche le temps du bouchon, tes dernières prises et les chiffres de la session. Sur Forever, il montre aussi ta compétence de pêche (par exemple `110 (+52) / 150`) et le temps restant de ton appât, et il te prévient quand tu n'as pas de canne équipée.
 
-### 📖 Un carnet qui se souvient
-- Chaque prise est notée **par zone** : ce qui vit où, et combien tu en as pêché.
-- **Statistiques de session** : prises, lancers, prises par heure, taux de réussite.
-- **Notifications** pour les nouvelles espèces et les prises rares, avec un son en option.
+Le butin est ramassé automatiquement pendant la pêche. Il y a un bouton sur la minicarte, et chacune de ces fonctions peut être désactivée dans les options.
 
-### 🧭 Jamais dans tes pattes
-- **Le mode pêche démarre tout seul** à ton premier lancer et s'arrête quand tu le décides (un arrêt après inactivité est possible).
-- **Butin automatique** pendant la pêche, puis ton réglage revient.
-- Panneau déplaçable et redimensionnable, **bouton sur la minicarte**, entrée dans le menu des addons, et une page dans les options AddOns du jeu.
+## Installation
 
----
+1. Place le dossier `Bubulle` dans `World of Warcraft\_forever_\Interface\AddOns` (ou `_retail_`).
+2. En jeu, tape `/bubulle` et choisis ta touche de pêche.
 
-## 🚀 Pour commencer
+Le [guide](docs/GUIDE.md) détaille l'installation pas à pas et chaque option.
 
-1. Télécharge le fichier `.zip` de la [dernière version](https://github.com/Chauseth/bubulle/releases/latest) et place le dossier `Bubulle` dans `World of Warcraft\_forever_\Interface\AddOns` (ou `_retail_`).
-2. En jeu, tape `/bubulle` ou clique sur le bouton de la minicarte.
-3. Choisis ta **touche de pêche** sur l'écran d'accueil.
-4. Va au bord de l'eau et appuie sur ta touche. Bubulle s'occupe du reste.
+## Commandes
 
-Pour l'installation pas à pas et le détail de chaque option, lis le [guide complet](docs/GUIDE.md).
-
----
-
-## ⚙️ Commandes
-
-| Commande | Ce qu'elle fait |
+| Commande | |
 |---|---|
-| `/bubulle` | Ouvrir ou fermer la fenêtre de Bubulle |
-| `/bubulle peche` | Commencer ou arrêter le mode pêche |
-| `/bubulle hud` | Afficher ou masquer en permanence le panneau |
-| `/bubulle options` | Ouvrir les options |
-| `/bubulle session` | Commencer une nouvelle session |
-| `/bubulle minimap` | Afficher ou cacher le bouton de la minicarte |
+| `/bubulle` | ouvrir la fenêtre |
+| `/bubulle peche` | commencer ou arrêter le mode pêche |
+| `/bubulle hud` | garder le panneau affiché ou masqué |
+| `/bubulle options` | ouvrir les options |
+| `/bubulle session` | commencer une nouvelle session |
+| `/bubulle minimap` | afficher ou cacher le bouton de la minicarte |
 
-`/bub` marche aussi. **Bouton de la minicarte :** clic gauche pour la fenêtre, clic droit pour le mode pêche, glisser pour le déplacer.
+Bouton de la minicarte : clic gauche pour ouvrir la fenêtre, clic droit pour le mode pêche. Fais-le glisser pour le déplacer.
 
----
+## Questions
 
-## ❓ Questions fréquentes
+**C'est autorisé ?**
+Oui. Un addon ne peut pas lancer de sort tout seul. Le lancer ne part que quand tu appuies sur ta touche ou que tu cliques, comme avec un bouton de barre d'action.
 
-**C'est un bot ?**
-Non. Blizzard interdit aux addons de lancer un sort tout seuls. Chaque lancer et chaque ferrage viennent de ta touche ou de ton clic, comme un bouton de barre d'action.
+**La touche lance mais ne ferre pas.**
+Le ferrage passe par la fonction « Interagir » du jeu, que Bubulle active pendant la pêche. Vérifie qu'aucun autre addon n'utilise la même touche.
 
-**Ma touche lance la ligne mais ne ferre pas.**
-La touche ferre grâce à la fonction « Interagir » du jeu, que Bubulle active pendant la pêche. Reste près de ton bouchon et vérifie qu'aucun autre addon n'utilise la même touche.
+**Je peux garder un autre addon de pêche ?**
+Mieux vaut le désactiver. Deux addons qui gèrent le double-clic et le son en même temps se gênent.
 
-**Mes réglages de son vont-ils rester modifiés ?**
-Non. Bubulle les note avant de toucher à quoi que ce soit, et les remet à la fin du mode pêche, ou à ta connexion suivante si le jeu s'est fermé brutalement.
+## Limites
 
-**Je peux l'utiliser avec un autre addon de pêche ?**
-Mieux vaut éviter : deux addons qui gèrent le double-clic et le son en même temps se gênent. Désactive l'autre.
-
----
-
-## ⚠️ Limites connues
-
-- Comme tout addon, Bubulle ne peut pas lancer en combat : la touche et le double-clic sont en pause pendant un combat.
+- La touche et le double-clic ne marchent pas en combat (aucun addon ne peut lancer de sort en combat).
 - Français et anglais seulement pour l'instant.
 
----
+## Bugs et suggestions
 
-## 🐞 Bugs et suggestions
-
-Ouvre un ticket sur [GitHub](https://github.com/Chauseth/bubulle/issues) en précisant ta version du jeu, ce que tu faisais, et le texte de l'erreur s'il y en a un.
+Ouvre un ticket sur [GitHub](https://github.com/Chauseth/bubulle/issues) avec ta version du jeu, ce que tu faisais, et le message d'erreur s'il y en a un.

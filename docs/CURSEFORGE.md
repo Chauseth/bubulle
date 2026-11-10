@@ -1,108 +1,57 @@
-# Bubulle, your fishing buddy
+# Bubulle
 
-**Your fishing buddy for World of Warcraft.** One key to cast and hook, a splash you can actually hear, and a journal that remembers every catch.
+Fishing addon for **WoW Forever** (client 1.60.1). It also runs on Retail.
 
-Nothing is automated: Bubulle simply makes fishing comfortable. Built for **WoW Forever (client 1.60.1)**, also works on **Retail (12.1)**. Available in English and French.
+Bubulle lets you cast and hook with the same key, makes the bobber splash louder while you fish, and keeps track of what you catch in each zone. A small goldfish named Bubulle sits next to your screen and comments on your fishing now and then.
 
----
+## What it does
 
-## 🎣 Features
+**One key to cast and hook.** You pick a key the first time you open Bubulle. Press it to cast, then press it again when the bobber splashes. You can also cast with a double right-click on the water.
 
-### ⌨️ One key to fish
-- Press your **fishing key** to cast, press it again when the bobber splashes to **hook**. No more hunting for the bobber with the mouse.
-- Prefer the mouse? **Double right-click** the water to cast. The double-click speed is adjustable.
-- Your key can work everywhere, or only while fishing mode is on. Your choice.
+**Louder splash.** While you fish, sound effects go up and music and ambience are muted. Your sound settings are put back when you stop, or at your next login if the game crashed.
 
-### 🔊 Hear every bite
-- While you fish, Bubulle **brings the splash forward**: louder effects, music and ambience turned down.
-- Optional: keep the sound playing when the game is in the background.
-- When you stop, **your sound settings come back exactly as they were**. Even after a crash, they are restored at your next login.
+**Catch log.** Every catch is saved by zone. The window shows what you caught during the session, how many fish per hour, and how many casts actually caught something. You get a notification when you catch a new species or a rare fish.
 
-### 🐠 A little friend by the water
-- A compact panel shows the **bobber timer**, your session stats and your last catches.
-- On WoW Forever, it also shows your **real fishing skill** (bonuses in brackets), your **lure time left**, and warns you when no fishing pole is equipped.
-- Bubulle comments on your fishing now and then, and **hops with joy** when you land something new.
+**Panel while fishing.** It shows the bobber timer, your last catches and the session numbers. On Forever, it also shows your fishing skill (for example `110 (+52) / 150`) and how long your lure has left, and it tells you when you have no fishing pole equipped.
 
-### 📖 A journal that remembers
-- Every catch is logged **by zone**: what lives where, and how many you caught.
-- **Session stats**: catches, casts, catches per hour, success rate.
-- **Notifications** for new species and rare catches, with an optional sound.
+Loot is picked up automatically while you fish. There is a minimap button, and each of these features can be turned off in the options.
 
-### 🧭 Never in your way
-- **Fishing mode starts by itself** on your first cast and stops when you say so (an idle timer is optional).
-- **Auto loot** while fishing, turned back to your setting afterwards.
-- Movable and resizable panel, **minimap button**, addon compartment entry, and a page in the game's AddOns options.
+## Install
 
----
+1. Put the `Bubulle` folder in `World of Warcraft\_forever_\Interface\AddOns` (or `_retail_`).
+2. In game, type `/bubulle` and choose your fishing key.
 
-## 🚀 Getting started
+## Commands
 
-1. Install Bubulle with the CurseForge app, or put the `Bubulle` folder in `World of Warcraft\_forever_\Interface\AddOns` (or `_retail_`).
-2. Log in and type `/bubulle`, or click the minimap button.
-3. Pick your **fishing key** on the welcome screen.
-4. Walk to the water and press your key. Bubulle takes care of the rest.
-
----
-
-## ⚙️ Commands
-
-| Command | What it does |
+| Command | |
 |---|---|
-| `/bubulle` | Open or close Bubulle's window |
-| `/bubulle peche` | Start or stop fishing mode |
-| `/bubulle hud` | Always show or hide Bubulle's panel |
-| `/bubulle options` | Open the options |
-| `/bubulle session` | Start a new session |
-| `/bubulle minimap` | Show or hide the minimap button |
+| `/bubulle` | open the window |
+| `/bubulle peche` | start or stop fishing mode |
+| `/bubulle hud` | keep the panel shown or hidden |
+| `/bubulle options` | open the options |
+| `/bubulle session` | start a new session |
+| `/bubulle minimap` | show or hide the minimap button |
 
-`/bub` works too. **Minimap button:** left-click opens the window, right-click starts or stops fishing mode, drag to move it.
+Minimap button: left-click opens the window, right-click starts or stops fishing mode. Drag it to move it.
 
----
+## FAQ
 
-## 🛠️ Settings
+**Is it allowed?**
+Yes. Addons can't cast spells by themselves. The cast only happens when you press your key or click, the same way an action bar button works.
 
-- Fishing key, and whether it works outside fishing mode
-- Double right-click, its speed, and whether it works outside fishing mode
-- Splash boost, effects volume, mute music, mute ambience, sound in background
-- Auto loot, idle timer
-- Bubulle's comments, notifications for new species and rare catches, notification sound
-- Panel visibility, lock, size, minimap button
+**The key casts but doesn't hook.**
+Hooking uses the game's "Interact" feature, which Bubulle turns on while you fish. Check that no other addon uses the same key.
 
----
+**Can I keep another fishing addon?**
+It's better to disable it. Two addons handling double-click and sound at the same time get in each other's way.
 
-## ❓ FAQ
+## Known issues
 
-**Is this a bot?**
-No. Blizzard does not let addons cast spells on their own. Every cast and every hook comes from your key press or your click, like an action bar button.
+- The key and the double-click don't work in combat (no addon can cast in combat).
+- Only English and French for now.
 
-**My key casts, but doesn't hook the fish.**
-The key hooks through the game's "interact" feature, which Bubulle turns on while you fish. Stay close to your bobber, and make sure no other addon rebinds the same key.
+## Bugs and suggestions
 
-**Will my sound settings stay changed?**
-No. Bubulle remembers them before changing anything, and puts them back when fishing mode ends, or at your next login if the game closed unexpectedly.
+Open an issue on [GitHub](https://github.com/Chauseth/bubulle/issues). Tell me your game version, what you were doing, and the error message if there was one.
 
-**Can I use it with another fishing addon?**
-Better not: two addons handling the double-click and the sound at the same time get in each other's way. Disable the other one.
-
-**Does it work on Retail?**
-Yes. Skill, lure and fishing pole tracking only appear on WoW Forever, where they matter.
-
----
-
-## ⚠️ Known limitations
-
-- Like every addon, Bubulle cannot cast in combat: the fishing key and double-click pause during combat.
-- English and French only for now. Translations are welcome.
-
----
-
-## 🐞 Bug reports & suggestions
-
-Open an issue on [GitHub](https://github.com/Chauseth/bubulle/issues) with:
-- your game version (Forever or Retail),
-- what you did and what happened,
-- the error text if one appeared (BugSack makes this easy).
-
----
-
-🇫🇷 **Version française :** Bubulle est entièrement traduit en français. Présentation en français sur [GitHub](https://github.com/Chauseth/bubulle/blob/main/README.fr.md).
+Bubulle is fully translated into French. [Présentation en français](https://github.com/Chauseth/bubulle/blob/main/README.fr.md).
