@@ -5,3 +5,8 @@ ignore:
   - tools
   - docs
   - README.fr.md
+
+# Les notes de version viennent de ce fichier (et non des messages de commit).
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
