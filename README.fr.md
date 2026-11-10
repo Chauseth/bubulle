@@ -60,3 +60,7 @@ Mieux vaut le désactiver. Deux addons qui gèrent le double-clic et le son en m
 ## Bugs et suggestions
 
 Ouvre un ticket sur [GitHub](https://github.com/Chauseth/bubulle/issues) avec ta version du jeu, ce que tu faisais, et le message d'erreur s'il y en a un.
+
+## Licence
+
+MIT, voir [LICENSE](LICENSE). Les polices incluses (Alegreya, Caveat) sont sous licence SIL Open Font License.

@@ -60,3 +60,7 @@ It's better to disable it. Two addons handling double-click and sound at the sam
 ## Bugs and suggestions
 
 Open an issue on [GitHub](https://github.com/Chauseth/bubulle/issues). Tell me your game version, what you were doing, and the error message if there was one.
+
+## License
+
+MIT, see [LICENSE](LICENSE). The bundled fonts (Alegreya, Caveat) are under the SIL Open Font License.
