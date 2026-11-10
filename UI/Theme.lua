@@ -27,7 +27,7 @@ Theme.color = {
     goldDk    = { 0.690, 0.522, 0.255, 1 },    -- bordures dorées
     line      = { 0.769, 0.604, 0.322, 0.35 }, -- filets fins
     lineFaint = { 0.769, 0.604, 0.322, 0.16 }, -- séparateurs de lignes
-    water     = { 0.624, 0.816, 0.863, 1 },    -- l'écriture de Bubulle
+    water     = { 0.690, 0.871, 0.910, 1 },    -- ce que dit Bubulle
     fish      = { 0.878, 0.604, 0.243, 1 },    -- orange "poisson rouge"
     danger    = { 0.902, 0.443, 0.384, 1 },
     pageDk    = { 0.090, 0.063, 0.043, 1 },    -- fond des icônes et des champs
@@ -38,7 +38,7 @@ Theme.color = {
 local c = Theme.color
 
 Theme.ACCENT_HEX = "e6bf68"
-Theme.WATER_HEX = "9fd0dc"
+Theme.WATER_HEX = "b0dee8"
 Theme.FAINT_HEX = "a8936f"
 Theme.WHITE = "Interface\\Buttons\\WHITE8x8"
 Theme.ICON_FISHING = "Interface\\Icons\\Trade_Fishing"
@@ -64,7 +64,11 @@ Theme.FONT_TEXT   = MEDIA .. "Fonts\\Alegreya-Regular.ttf"
 Theme.FONT_ITALIC = MEDIA .. "Fonts\\Alegreya-Italic.ttf"
 Theme.FONT_BOLD   = MEDIA .. "Fonts\\Alegreya-Bold.ttf"
 Theme.FONT_TITLE  = MEDIA .. "Fonts\\AlegreyaSC-Bold.ttf"
-Theme.FONT_HAND   = MEDIA .. "Fonts\\Caveat-Bold.ttf"
+-- La "voix" de Bubulle. L'écriture manuscrite (Caveat) était peu lisible
+-- en jeu : il parle donc en italique. Pour revenir à l'écriture à la main,
+-- remplacer par MEDIA .. "Fonts\\Caveat-Bold.ttf" et HAND_SIZE par 20.
+Theme.FONT_HAND   = MEDIA .. "Fonts\\Alegreya-Italic.ttf"
+local HAND_SIZE   = 16
 
 -- Ces polices n'ont que l'alphabet latin : en coréen, chinois ou russe,
 -- on garde la police du jeu pour que les noms de zones et d'objets
@@ -93,8 +97,8 @@ Theme.font = {
     bold        = MakeFont("BubulleFontBold",    Theme.FONT_BOLD,   15, c.ink),
     small       = MakeFont("BubulleFontSmall",   Theme.FONT_ITALIC, 13, c.inkSoft),
     tiny        = MakeFont("BubulleFontTiny",    Theme.FONT_ITALIC, 12, c.inkFaint),
-    hand        = MakeFont("BubulleFontHand",    Theme.FONT_HAND,   21, c.water),
-    handSmall   = MakeFont("BubulleFontHandSm",  Theme.FONT_HAND,   18, c.water),
+    hand        = MakeFont("BubulleFontHand",    Theme.FONT_HAND,   HAND_SIZE + 3, c.water),
+    handSmall   = MakeFont("BubulleFontHandSm",  Theme.FONT_HAND,   HAND_SIZE, c.water),
     number      = MakeFont("BubulleFontNumber",  Theme.FONT_BOLD,   22, c.ink),
     numberSmall = MakeFont("BubulleFontNumSm",   Theme.FONT_BOLD,   17, c.ink),
     numberTiny  = MakeFont("BubulleFontNumTiny", Theme.FONT_BOLD,   12, c.ink, "OUTLINE"),

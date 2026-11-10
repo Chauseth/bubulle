@@ -360,10 +360,26 @@ function W.Checkbox(parent, label, tooltip, get, set)
     local button = CreateFrame("Button", nil, parent)
     button:SetHeight(22)
 
-    local box = CreateFrame("Frame", nil, button, "BackdropTemplate")
-    box:SetSize(15, 15)
+    -- La case est faite de deux carrés pleins (un doré, un sombre posé
+    -- dessus) plutôt que d'un contour d'un pixel : selon l'échelle de
+    -- l'interface, le jeu "arrondit" les traits fins et en efface parfois un.
+    local box = CreateFrame("Frame", nil, button)
+    box:SetSize(14, 14)
     box:SetPoint("LEFT", 0, 0)
-    Theme.Backdrop(box, c.pageDk, c.goldDk)
+    local edge = box:CreateTexture(nil, "BACKGROUND")
+    edge:SetAllPoints()
+    local inside = box:CreateTexture(nil, "BORDER")
+    inside:SetPoint("TOPLEFT", 1.5, -1.5)
+    inside:SetPoint("BOTTOMRIGHT", -1.5, 1.5)
+    Theme.Fill(inside, c.pageDk)
+    for _, t in ipairs({ edge, inside }) do
+        if t.SetSnapToPixelGrid then
+            t:SetSnapToPixelGrid(false)
+            t:SetTexelSnappingBias(0)
+        end
+    end
+    local function Edge(color) Theme.Fill(edge, color) end
+    Edge(c.goldDk)
 
     local mark = box:CreateTexture(nil, "OVERLAY")
     mark:SetSize(22, 22)
@@ -392,12 +408,8 @@ function W.Checkbox(parent, label, tooltip, get, set)
         ns.PlayUISound(value and "IG_MAINMENU_OPTION_CHECKBOX_ON" or "IG_MAINMENU_OPTION_CHECKBOX_OFF")
         self:Refresh()
     end)
-    button:SetScript("OnEnter", function()
-        box:SetBackdropBorderColor(c.gold[1], c.gold[2], c.gold[3], 1)
-    end)
-    button:SetScript("OnLeave", function()
-        box:SetBackdropBorderColor(c.goldDk[1], c.goldDk[2], c.goldDk[3], 1)
-    end)
+    button:SetScript("OnEnter", function() Edge(c.gold) end)
+    button:SetScript("OnLeave", function() Edge(c.goldDk) end)
     if tooltip then
         W.SetTooltip(button, label, tooltip)
     end

@@ -471,7 +471,10 @@ local function BuildOptionsSpread(spread, left, right)
     -- Place une liste d'éléments les uns sous les autres.
     local function Stack(top, items)
         local y = top
-        for _, item in ipairs(items) do
+        for i, item in ipairs(items) do
+            if item.section and i > 1 then
+                y = y + 10 -- un peu d'air avant chaque titre de section
+            end
             item.widget:SetPoint("TOPLEFT", 0, -y)
             item.widget:SetWidth(CONTENT_W)
             y = y + (item.space or item.widget:GetHeight() + 2)
@@ -512,13 +515,13 @@ local function BuildOptionsSpread(spread, left, right)
     spread.minimap = Check(left, "minimapButton", L.OPT_MINIMAP, L.OPT_MINIMAP_TIP)
 
     Stack(56, {
-        { widget = W.SectionHeader(left, L.SECTION_CAST), space = 28 },
+        { widget = W.SectionHeader(left, L.SECTION_CAST), space = 28, section = true },
         { widget = keyRow, space = 54 },
         { widget = spread.oneKeyAlways },
         { widget = spread.doubleClick },
         { widget = spread.doubleClickAlways },
         { widget = spread.delay, space = 52 },
-        { widget = W.SectionHeader(left, L.SECTION_BUBULLE), space = 28 },
+        { widget = W.SectionHeader(left, L.SECTION_BUBULLE), space = 28, section = true },
         { widget = spread.talk },
         { widget = spread.newAlert },
         { widget = spread.rareAlert },
@@ -549,16 +552,16 @@ local function BuildOptionsSpread(spread, left, right)
     spread.hudScale = Slide(right, "hudScale", L.OPT_HUD_SCALE, 0.7, 1.5, 0.05, percent)
 
     Stack(56, {
-        { widget = W.SectionHeader(right, L.SECTION_SOUND), space = 28 },
+        { widget = W.SectionHeader(right, L.SECTION_SOUND), space = 28, section = true },
         { widget = spread.sound },
         { widget = spread.sfx, space = 46 },
         { widget = spread.muteMusic },
         { widget = spread.muteAmbience },
         { widget = spread.background },
-        { widget = W.SectionHeader(right, L.SECTION_BEHAVIOUR), space = 28 },
+        { widget = W.SectionHeader(right, L.SECTION_BEHAVIOUR), space = 28, section = true },
         { widget = spread.idle, space = 46 },
         { widget = spread.autoLoot },
-        { widget = W.SectionHeader(right, L.SECTION_DISPLAY), space = 28 },
+        { widget = W.SectionHeader(right, L.SECTION_DISPLAY), space = 28, section = true },
         { widget = spread.hudAuto },
         { widget = spread.hudAlways },
         { widget = spread.hudLocked },
