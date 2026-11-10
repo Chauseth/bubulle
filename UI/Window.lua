@@ -571,6 +571,20 @@ local function BuildOptionsSpread(spread, left, right)
     local resetPos = W.Button(left, L.BTN_RESET_POSITION, 170, 24)
     resetPos:SetPoint("BOTTOMRIGHT", 0, 8)
     resetPos:SetScript("OnClick", function() ns.HUD:ResetPosition() end)
+
+    -- Remise à zéro, juste au-dessus du pied de page
+    local half = (CONTENT_W - 18) / 2
+    local resetSettings = W.Button(left, L.BTN_RESET_SETTINGS, half, 24)
+    resetSettings:SetPoint("BOTTOMLEFT", 0, 40)
+    resetSettings:SetScript("OnClick", function() ns:AskResetSettings() end)
+    W.SetTooltip(resetSettings, L.BTN_RESET_SETTINGS, L.BTN_RESET_SETTINGS_TIP)
+    spread.resetSettings = resetSettings
+
+    local clearJournal = W.Button(left, L.BTN_CLEAR_JOURNAL, half, 24)
+    clearJournal:SetPoint("BOTTOMRIGHT", 0, 40)
+    clearJournal:SetScript("OnClick", function() ns:AskClearJournal() end)
+    W.SetTooltip(clearJournal, L.BTN_CLEAR_JOURNAL, L.BTN_CLEAR_JOURNAL_TIP)
+    spread.clearJournal = clearJournal
 end
 
 function Window:RefreshOptions()
@@ -659,6 +673,7 @@ end
 
 function Window:ShowWelcome()
     self:Open()
+    W.RestorePosition(frame, "window", "CENTER", "CENTER", -50, 30)
     frame.welcome:Show()
 end
 

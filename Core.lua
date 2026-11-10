@@ -195,6 +195,75 @@ ns:RegisterEvent("PLAYER_LOGIN", function()
 end)
 
 ------------------------------------------------------------------------
+-- Remise à zéro (boutons de l'onglet Réglages)
+------------------------------------------------------------------------
+
+--- Remet tous les réglages par défaut. La touche de pêche est effacée
+-- (aussi dans le menu Raccourcis du jeu) et l'écran d'accueil revient.
+-- Le carnet de pêche, lui, est conservé.
+function ns:ResetSettings()
+    if InCombatLockdown() then
+        ns.Print(L.ERR_COMBAT)
+        return
+    end
+    -- Quitter le mode pêche d'abord : les réglages de son sont rétablis.
+    if ns.Fishing.active then
+        ns.Fishing:SetActive(false)
+    end
+    local db = ns.db
+    wipe(db.settings)
+    ApplyDefaults(db.settings, ns.defaults.settings)
+    wipe(db.positions)
+    db.welcomed = false
+    ns.Fishing:SetKey(false)
+    ns.HUD:ApplySettings()
+    ns:Fire("SETTINGS_CHANGED")
+    ns.Print(L.RESET_SETTINGS_DONE)
+    ns.Window:ShowWelcome()
+end
+
+--- Efface tout le carnet : prises, zones, statistiques et la mémoire des
+-- objets (noms, icônes). Les réglages ne changent pas.
+function ns:ClearJournal()
+    local db = ns.db
+    wipe(db.zones)
+    wipe(db.items)
+    wipe(db.history)
+    wipe(db.totals)
+    ApplyDefaults(db.totals, ns.defaults.totals)
+    ns.Journal:ResetSession()
+    ns.Print(L.JOURNAL_CLEARED)
+end
+
+-- Fenêtres de confirmation (le jeu les affiche au milieu de l'écran).
+local function Confirm(key, text, onAccept)
+    if not StaticPopupDialogs or not StaticPopup_Show then
+        onAccept()
+        return
+    end
+    StaticPopupDialogs[key] = StaticPopupDialogs[key] or {
+        text = text,
+        button1 = YES or "Yes",
+        button2 = CANCEL or "Cancel",
+        OnAccept = onAccept,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        showAlert = true,
+        preferredIndex = 3,
+    }
+    StaticPopup_Show(key)
+end
+
+function ns:AskResetSettings()
+    Confirm("BUBULLE_RESET_SETTINGS", L.CONFIRM_RESET_SETTINGS, function() ns:ResetSettings() end)
+end
+
+function ns:AskClearJournal()
+    Confirm("BUBULLE_CLEAR_JOURNAL", L.CONFIRM_CLEAR_JOURNAL, function() ns:ClearJournal() end)
+end
+
+------------------------------------------------------------------------
 -- Commandes : /bubulle
 ------------------------------------------------------------------------
 SLASH_BUBULLE1 = "/bubulle"

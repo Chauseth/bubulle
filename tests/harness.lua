@@ -262,3 +262,16 @@ step("minimap button", function()
   b:Fire("OnClick", "LeftButton"); b:Fire("OnClick", "RightButton")
   SlashCmdList.BUBULLE("minimap"); assert(not b:IsShown()); SlashCmdList.BUBULLE("minimap"); assert(b:IsShown())
 end)
+step("reset settings + clear journal", function()
+  ns.db.settings.hudScale = 1.3; ns.Fishing:SetKey("F"); ns.db.welcomed = true
+  local page = ns.Window.pages.options
+  page.resetSettings:Fire("OnClick")
+  assert(ns.db.settings.hudScale == 1, "scale not reset"); assert(ns.db.settings.oneKey == false); assert(gameBindings.F == nil, "game binding kept")
+  assert(ns.db.welcomed == false); assert(BubulleWindow.welcome:IsShown(), "welcome not shown after reset")
+  BubulleWindow.welcome:Hide(); ns.db.welcomed = true
+  local before = ns.db.totals.catches; assert(before > 0)
+  page.clearJournal:Fire("OnClick")
+  assert(ns.db.totals.catches == 0 and next(ns.db.zones) == nil and next(ns.db.items) == nil, "journal not cleared")
+  assert(ns.session.catches == 0)
+  ns.Window:Open("journal"); ns.Window:Open("session")
+end)
