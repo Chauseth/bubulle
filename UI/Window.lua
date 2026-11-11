@@ -132,7 +132,7 @@ end
 local function CreatePage(parent, side)
     local page = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     page:SetSize(PAGE_W, BOOK_H - COVER * 2)
-    Theme.Surface(page, "page")
+    Theme.Surface(page, side == "left" and "pageLeft" or "page")
     W.GiltFrame(page, 9, c.goldDk, "BORDER")
 
     -- Ombre vers la reliure : la page "plonge" dans le pli.
@@ -166,9 +166,10 @@ local function CreateSpread(book, firstFolio)
     spread:SetAllPoints()
     spread:Hide()
     spread.left = CreatePage(spread, "left")
-    spread.left:SetPoint("TOPLEFT", COVER, -COVER)
+    local top = COVER + (Theme.deco.headerSpace or 0) -- place pour une barre de titre
+    spread.left:SetPoint("TOPLEFT", COVER, -top)
     spread.right = CreatePage(spread, "right")
-    spread.right:SetPoint("TOPRIGHT", -COVER, -COVER)
+    spread.right:SetPoint("TOPRIGHT", -COVER, -top)
     spread.left.folio:SetText(("— %d —"):format(firstFolio))
     spread.right.folio:SetText(("— %d —"):format(firstFolio + 1))
     return spread, spread.left.content, spread.right.content
@@ -828,11 +829,18 @@ local function DecorateCover(book)
         end
     end
 
+    -- Barre de titre des fenêtres du jeu
+    if style.title then
+        local title = deco:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        title:SetPoint("TOP", book, "TOP", 0, -5)
+        title:SetText("Bubulle")
+    end
+
     -- Bouton de fermeture : en laiton, du jeu, ou une simple croix
     local close
     if style.close == "blizzard" then
         close = CreateFrame("Button", nil, deco, "UIPanelCloseButton")
-        close:SetPoint("TOPRIGHT", book, "TOPRIGHT", -4, -4)
+        close:SetPoint("TOPRIGHT", book, "TOPRIGHT", 1, 0)
     elseif style.close == "glyph" then
         close = W.GlyphButton(deco, "close", 20)
         close:SetPoint("TOPRIGHT", book, "TOPRIGHT", -6, -6)
@@ -849,7 +857,7 @@ end
 ------------------------------------------------------------------------
 local function Build()
     frame = CreateFrame("Frame", "BubulleWindow", UIParent, "BackdropTemplate")
-    frame:SetSize(BOOK_W, BOOK_H)
+    frame:SetSize(BOOK_W, BOOK_H + (Theme.deco.headerSpace or 0))
     frame:SetFrameStrata("HIGH")
     frame:SetToplevel(true)
     Theme.Surface(frame, "window")

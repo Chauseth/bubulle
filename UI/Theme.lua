@@ -48,6 +48,7 @@ local BLIZZ = {
     tipBorder    = "Interface\\Tooltips\\UI-Tooltip-Border",
     checkUp      = "Interface\\Buttons\\UI-CheckBox-Up",
     checkHi      = "Interface\\Buttons\\UI-CheckBox-Highlight",
+    rock         = "Interface\\FrameGeneral\\UI-Background-Rock",
 }
 Theme.BLIZZ = BLIZZ
 
@@ -267,20 +268,27 @@ THEMES.sombre = {
     },
 }
 
+-- Style « wow » : comme le grimoire du jeu. Cadre de métal sur fond de
+-- roche, pages de parchemin, encre brune et police du jeu.
+local function Tip(bg, border) -- cadre façon info-bulle du jeu
+    return { bgFile = BLIZZ.tipBg, edgeFile = BLIZZ.tipBorder, edgeSize = 16,
+             tile = true, inset = 4, bg = bg, border = border }
+end
+
 THEMES.wow = {
     color = {
-        ink       = { 1, 1, 1, 1 },
-        inkSoft   = { 0.86, 0.86, 0.86, 1 },
-        inkFaint  = { 0.62, 0.62, 0.62, 1 },
-        gold      = { 1, 0.82, 0, 1 },             -- le jaune des fenêtres du jeu
-        goldDk    = { 0.60, 0.48, 0.12, 1 },
-        line      = { 1, 0.82, 0, 0.28 },
-        lineFaint = { 1, 1, 1, 0.08 },
-        water     = { 0.45, 0.80, 1, 1 },
-        fish      = { 1, 0.55, 0.15, 1 },
-        danger    = { 1, 0.30, 0.25, 1 },
-        pageDk    = { 0, 0, 0, 0.6 },
-        tab       = { 0.05, 0.05, 0.05, 0.85 },
+        ink       = { 0.200, 0.120, 0.050, 1 },    -- encre brune du grimoire
+        inkSoft   = { 0.320, 0.220, 0.120, 1 },
+        inkFaint  = { 0.450, 0.350, 0.240, 1 },
+        gold      = { 0.420, 0.220, 0.040, 1 },    -- titres : brun-roux
+        goldDk    = { 0.500, 0.370, 0.200, 1 },
+        line      = { 0.400, 0.260, 0.110, 0.45 },
+        lineFaint = { 0.400, 0.260, 0.110, 0.18 },
+        water     = { 0.080, 0.300, 0.480, 1 },
+        fish      = { 0.800, 0.400, 0.080, 1 },
+        danger    = { 0.700, 0.150, 0.100, 1 },
+        pageDk    = { 0, 0, 0, 0.55 },
+        tab       = { 0.05, 0.05, 0.05, 0.9 },
         tabHi     = { 0.12, 0.12, 0.12, 0.9 },
         count     = { 1, 1, 1, 1 },
         shadow    = { 0, 0, 0, 0.5 },
@@ -290,35 +298,35 @@ THEMES.wow = {
         primaryHi = { 1, 1, 1, 1 },
         primaryText   = { 1, 0.82, 0, 1 },
         primaryTextHi = { 1, 1, 1, 1 },
+        tabText   = { 1, 0.82, 0, 1 },             -- onglets sur fond sombre
+        tabTextOn = { 1, 1, 1, 1 },
         spine     = { 0, 0, 0, 0 },
         tape      = { 0, 0, 0, 0 },
         closeX    = { 1, 1, 1, 1 },
     },
-    hex = { accent = "ffd100", water = "73ccff", faint = "9e9e9e" },
+    hex = { accent = "6b380a", water = "144d7a", faint = "73593d" },
     quality = {
-        [0] = { 0.62, 0.62, 0.62 }, [2] = { 0.12, 1.00, 0.00 }, [3] = { 0.25, 0.60, 1.00 },
-        [4] = { 0.70, 0.35, 1.00 }, [5] = { 1.00, 0.50, 0.00 },
+        [0] = { 0.40, 0.38, 0.35 }, [2] = { 0.08, 0.42, 0.04 }, [3] = { 0.00, 0.30, 0.70 },
+        [4] = { 0.45, 0.12, 0.65 }, [5] = { 0.72, 0.34, 0.00 },
     },
     fonts = GAME, sizes = SIZES_SANS,
-    fontShadow = { 0, 0, 0, 1 },
+    fontShadow = { 0, 0, 0, 0 },
     surface = {
-        window = { bgFile = BLIZZ.dialogBg, edgeFile = BLIZZ.dialogBorder, edgeSize = 32,
-                   tile = true, inset = 11, bg = { 1, 1, 1, 1 }, border = { 1, 1, 1, 1 } },
-        page   = { bgFile = BLIZZ.tipBg, edgeFile = BLIZZ.tipBorder, edgeSize = 16, tile = true,
-                   inset = 4, bg = { 0.05, 0.05, 0.05, 0.75 }, border = { 0.6, 0.6, 0.6, 1 } },
-        card   = { bgFile = BLIZZ.tipBg, edgeFile = BLIZZ.tipBorder, edgeSize = 16, tile = true,
-                   inset = 4, bg = { 0.05, 0.05, 0.10, 0.92 }, border = { 0.8, 0.8, 0.8, 1 } },
-        toast  = { bgFile = BLIZZ.tipBg, edgeFile = BLIZZ.tipBorder, edgeSize = 16, tile = true,
-                   inset = 4, bg = { 0.05, 0.05, 0.10, 0.92 }, border = { 1, 0.82, 0, 1 } },
-        tabOn  = { bgFile = BLIZZ.tipBg, edgeFile = BLIZZ.tipBorder, edgeSize = 16, tile = true,
-                   inset = 4, bg = { 0.10, 0.10, 0.10, 0.95 }, border = { 1, 0.82, 0, 1 } },
-        tabOff = { bgFile = BLIZZ.tipBg, edgeFile = BLIZZ.tipBorder, edgeSize = 16, tile = true,
-                   inset = 4, bg = { 0.05, 0.05, 0.05, 0.85 }, border = { 0.5, 0.5, 0.5, 1 } },
-        field  = { bg = { 0, 0, 0, 0.6 }, border = { 0.4, 0.4, 0.4, 1 } },
+        -- Cadre de métal des fenêtres du jeu, fond de roche
+        window   = { panel = "ButtonFrameTemplateNoPortrait", bgFile = BLIZZ.rock },
+        -- Les deux pages du grimoire
+        pageLeft = { atlas = "spellbook-Page-Left-C60" },
+        page     = { atlas = "spellbook-Page-Right-C60" },
+        card     = { atlas = "spellbook-Page-Right-C60" },
+        toast    = Tip({ 0.84, 0.74, 0.56, 0.97 }, { 0.55, 0.42, 0.25, 1 }),
+        tabOn    = Tip({ 0.10, 0.10, 0.10, 0.95 }, { 1, 0.82, 0, 1 }),
+        tabOff   = Tip({ 0.05, 0.05, 0.05, 0.9 }, { 0.5, 0.5, 0.5, 1 }),
+        field    = { bg = { 0, 0, 0, 0.55 }, border = { 0.35, 0.25, 0.15, 1 } },
     },
     deco = {
         gilt = false, ribbon = false, corners = false, spine = false, tape = false,
         pageShade = false, drop = false, folio = false, close = "blizzard", widgets = "blizzard",
+        title = true, headerSpace = 10,
     },
 }
 
@@ -357,6 +365,9 @@ function Theme.Apply(key)
     for name, value in pairs(theme.color) do
         c[name] = { value[1], value[2], value[3], value[4] or 1 }
     end
+    -- Texte des onglets : comme les boutons, sauf avis contraire du style
+    c.tabText = c.tabText or c.inkSoft
+    c.tabTextOn = c.tabTextOn or c.gold
     Copy(Theme.deco, theme.deco)
     Theme.ACCENT_HEX = theme.hex.accent
     Theme.WATER_HEX = theme.hex.water
@@ -432,7 +443,40 @@ end
 function Theme.Surface(frame, kind, themeKey)
     local theme = themeKey and THEMES[themeKey] or current
     local palette = themeKey and theme.color or c
-    local s = theme.surface[kind]
+    local s = theme.surface[kind] or theme.surface.page
+
+    -- Image du jeu étirée sur tout le cadre (pages du grimoire)
+    if s.atlas then
+        frame:SetBackdrop(nil)
+        if not frame.surfaceArt then
+            frame.surfaceArt = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
+            frame.surfaceArt:SetAllPoints()
+        end
+        frame.surfaceArt:SetAtlas(s.atlas)
+        return
+    end
+    -- Cadre de métal du jeu (bordure en 9 morceaux) sur fond de roche
+    if s.panel then
+        frame:SetBackdrop(nil)
+        if not frame.surfaceArt then
+            frame.surfaceArt = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
+            frame.surfaceArt:SetPoint("TOPLEFT", 2, -2)
+            frame.surfaceArt:SetPoint("BOTTOMRIGHT", -2, 2)
+            frame.surfaceArt:SetTexture(s.bgFile, "REPEAT", "REPEAT")
+            frame.surfaceArt:SetHorizTile(true)
+            frame.surfaceArt:SetVertTile(true)
+            if NineSliceUtil then
+                local border = CreateFrame("Frame", nil, frame, "NineSlicePanelTemplate")
+                border:SetAllPoints()
+                -- Juste au-dessus du fond : le titre et la croix restent visibles
+                border:SetFrameLevel(frame:GetFrameLevel() + 1)
+                NineSliceUtil.ApplyLayoutByName(border, s.panel)
+                frame.surfaceBorder = border
+            end
+        end
+        return
+    end
+
     local inset = s.inset or 0
     frame:SetBackdrop({
         bgFile = s.bgFile or Theme.WHITE,
@@ -460,7 +504,7 @@ end
 
 --- Épaisseur de la bordure d'un rôle (pour placer un liseré à l'intérieur).
 function Theme.Inset(kind)
-    local s = current.surface[kind]
+    local s = current.surface[kind] or current.surface.page
     return math.max(1, s.inset or 0)
 end
 

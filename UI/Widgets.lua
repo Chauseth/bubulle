@@ -631,10 +631,10 @@ function W.Tabs(parent, items, onSelect)
             holder:Select(item.key)
         end)
         tab:SetScript("OnEnter", function(self)
-            if holder.selected ~= self.key then Theme.Paint(self.text, c.gold) end
+            if holder.selected ~= self.key then Theme.Paint(self.text, c.tabTextOn) end
         end)
         tab:SetScript("OnLeave", function(self)
-            if holder.selected ~= self.key then Theme.Paint(self.text, c.inkSoft) end
+            if holder.selected ~= self.key then Theme.Paint(self.text, c.tabText) end
         end)
         holder.buttons[i] = tab
     end
@@ -648,14 +648,14 @@ function W.Tabs(parent, items, onSelect)
                 tab:SetWidth(TAB_W + TAB_OUT)
                 tab:SetPoint("TOPLEFT", -TAB_OUT, tab.y)
                 tab.text:SetPoint("LEFT", 22 + TAB_OUT, 0)
-                Theme.Paint(tab.text, c.gold)
+                Theme.Paint(tab.text, c.tabTextOn)
                 tab:SetFrameLevel(holder:GetFrameLevel() + 2)
             else
                 Theme.Surface(tab, "tabOff")
                 tab:SetWidth(TAB_W)
                 tab:SetPoint("TOPLEFT", 0, tab.y)
                 tab.text:SetPoint("LEFT", 22, 0)
-                Theme.Paint(tab.text, c.inkSoft)
+                Theme.Paint(tab.text, c.tabText)
                 tab:SetFrameLevel(holder:GetFrameLevel() + 1)
             end
         end
