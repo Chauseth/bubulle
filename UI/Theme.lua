@@ -181,7 +181,7 @@ THEMES.clair = {
     color = {
         ink       = { 0.200, 0.140, 0.090, 1 },
         inkSoft   = { 0.360, 0.270, 0.180, 1 },
-        inkFaint  = { 0.500, 0.420, 0.320, 1 },
+        inkFaint  = { 0.440, 0.360, 0.270, 1 },
         gold      = { 0.600, 0.380, 0.090, 1 },
         goldDk    = { 0.580, 0.430, 0.220, 1 },
         line      = { 0.550, 0.400, 0.200, 0.40 },
@@ -285,7 +285,7 @@ THEMES.wow = {
     color = {
         ink       = { 0.200, 0.120, 0.050, 1 },    -- encre brune du grimoire
         inkSoft   = { 0.320, 0.220, 0.120, 1 },
-        inkFaint  = { 0.450, 0.350, 0.240, 1 },
+        inkFaint  = { 0.340, 0.250, 0.150, 1 },
         gold      = { 0.420, 0.220, 0.040, 1 },    -- titres : brun-roux
         goldDk    = { 0.500, 0.370, 0.200, 1 },
         line      = { 0.400, 0.260, 0.110, 0.45 },
@@ -310,7 +310,7 @@ THEMES.wow = {
         tape      = { 0, 0, 0, 0 },
         closeX    = { 1, 1, 1, 1 },
     },
-    hex = { accent = "6b380a", water = "144d7a", faint = "73593d" },
+    hex = { accent = "6b380a", water = "144d7a", faint = "57402a" },
     quality = {
         [0] = { 0.40, 0.38, 0.35 }, [2] = { 0.08, 0.42, 0.04 }, [3] = { 0.00, 0.30, 0.70 },
         [4] = { 0.45, 0.12, 0.65 }, [5] = { 0.72, 0.34, 0.00 },
@@ -329,7 +329,10 @@ THEMES.wow = {
         pageLeft  = { atlas = "spellbook-Page-Left-C60", crop = 0.08, outset = { 0, 7 } },
         pageRight = { atlas = "spellbook-Page-Right-C60", crop = 0.08, outset = { 7, 0 } },
         page      = { atlas = "spellbook-Page-Right-C60", crop = 0.08 },
-        card      = { atlas = "spellbook-Page-Right-C60", crop = 0.08 },
+        -- Panneau de pêche : seulement le milieu du parchemin (sans les
+        -- bords brûlés), avec un cadre d'info-bulle tout autour.
+        card      = { atlas = "spellbook-Page-Right-C60", crop = { 0.10, 0.06, 0.14, 0.08 },
+                      edge = { 0.45, 0.33, 0.18, 1 } },
         toast    = Tip({ 0.84, 0.74, 0.56, 0.97 }, { 0.55, 0.42, 0.25, 1 }),
         field    = { bg = { 0, 0, 0, 0.55 }, border = { 0.35, 0.25, 0.15, 1 } },
     },
@@ -473,11 +476,21 @@ function Theme.Surface(frame, kind, themeKey)
         art:SetPoint("BOTTOMRIGHT", out[2] or 0, 0)
         art:SetAtlas(s.atlas)
         if s.crop then
-            -- Coordonnées de l'image dans sa planche : on rogne le haut.
+            -- Coordonnées de l'image dans sa planche, qu'on rogne : un nombre
+            -- coupe le haut, une table { gauche, droite, haut, bas } les 4 côtés.
+            local crop = type(s.crop) == "table" and s.crop or { 0, 0, s.crop, 0 }
             local left, top, _, bottom, right = art:GetTexCoord()
             if left and right then
-                art:SetTexCoord(left, right, top + (bottom - top) * s.crop, bottom)
+                local w, h = right - left, bottom - top
+                art:SetTexCoord(left + w * crop[1], right - w * crop[2], top + h * crop[3], bottom - h * crop[4])
             end
+        end
+        if s.edge then
+            frame:SetBackdrop({ edgeFile = BLIZZ.tipBorder, edgeSize = 14 })
+            frame:SetBackdropBorderColor(s.edge[1], s.edge[2], s.edge[3], s.edge[4] or 1)
+            art:ClearAllPoints()
+            art:SetPoint("TOPLEFT", 3, -3)
+            art:SetPoint("BOTTOMRIGHT", -3, 3)
         end
         return
     end

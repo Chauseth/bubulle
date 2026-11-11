@@ -316,7 +316,7 @@ function W.GlyphButton(parent, kind, size)
     local strokes = {}
     local function Stroke()
         local t = button:CreateTexture(nil, "ARTWORK")
-        Theme.Fill(t, c.inkFaint)
+        Theme.Fill(t, c.inkSoft)
         strokes[#strokes + 1] = t
         return t
     end
@@ -325,14 +325,14 @@ function W.GlyphButton(parent, kind, size)
     if kind == "close" then
         for _, angle in ipairs({ 45, -45 }) do
             local t = Stroke()
-            t:SetSize(inner * 1.25, 1.5)
+            t:SetSize(inner * 1.25, 2)
             t:SetPoint("CENTER")
             t:SetRotation(math.rad(angle))
         end
     else -- "menu"
         for i = -1, 1 do
             local t = Stroke()
-            t:SetSize(inner, 1.5)
+            t:SetSize(inner, 2)
             t:SetPoint("CENTER", 0, i * (inner / 3))
         end
     end
@@ -341,7 +341,7 @@ function W.GlyphButton(parent, kind, size)
         for _, t in ipairs(strokes) do Theme.Fill(t, color) end
     end
     button:SetScript("OnEnter", function() Tint(kind == "close" and c.danger or c.gold) end)
-    button:SetScript("OnLeave", function() Tint(c.inkFaint) end)
+    button:SetScript("OnLeave", function() Tint(c.inkSoft) end)
     return button
 end
 
