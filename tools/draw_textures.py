@@ -148,4 +148,37 @@ for (cx, cy, r) in [(390, 120, 70), (120, 420, 52)]:
     paper *= (1 - ring[..., None] * np.array([0.6, 0.8, 1.0]))
 save_rgb(paper, "page_light")
 
+# Marque-page des onglets : ruban de tissu couché, bout fendu en V à droite.
+# Dessiné en gris clair : le jeu le teinte (SetVertexColor) selon l'onglet.
+def bookmark(img, k):
+    w, h = 128 * k, 32 * k
+    y = np.linspace(-1, 1, h)[:, None]
+    x = np.arange(w)[None, :]
+    # Volume : bombé au milieu, plus sombre sur les bords du ruban
+    shade = 1 - 0.30 * y ** 2 + 0.06 * (1 - np.abs(y)) ** 6
+    # Trame du tissu : fines rayures horizontales
+    weave = 1 + 0.035 * np.sin(np.arange(h)[:, None] / k * np.pi)
+    lum = np.clip(225 * shade * weave * np.ones((1, w)), 0, 255)
+    arr = np.zeros((h, w, 4), np.float32)
+    arr[..., 0] = arr[..., 1] = arr[..., 2] = lum
+    arr[..., 3] = 255
+    # Couture en pointillés près des deux bords
+    for row in (int(4.5 * k), h - int(5.5 * k)):
+        dash = ((x // (5 * k)) % 2 == 0) & (x > 2 * k)
+        for r in range(row, row + k):
+            arr[r, dash[0], :3] = np.minimum(arr[r, dash[0], :3] * 1.45, 255)
+    # Ourlet : une ligne sombre tout au bord
+    arr[:k, :, :3] *= 0.7
+    arr[-k:, :, :3] *= 0.7
+    # Bout fendu en V (côté droit)
+    notch = 14 * k
+    for xx_ in range(w - notch, w):
+        depth = (xx_ - (w - notch)) / notch
+        half = depth * h / 2
+        arr[int(h / 2 - half):int(h / 2 + half) + 1, xx_, 3] = 0
+    img.paste(Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), "RGBA"))
+
+
+save_rgba(supersample(bookmark, (128, 32)), "bookmark")
+
 print("Textures écrites dans", MEDIA)

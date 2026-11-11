@@ -606,59 +606,71 @@ function W.KeyButton(parent, get, set, width)
 end
 
 ------------------------------------------------------------------------
--- Onglets en marque-page, empilés sur le bord droit du carnet.
--- L'onglet choisi prend la couleur de la page et "sort" un peu plus.
+-- Onglets : des marque-pages en ruban qui dépassent du bord du livre.
+-- Chaque onglet a sa couleur (Theme.marks) ; l'onglet ouvert sort plus
+-- loin et prend sa couleur vive, les autres restent un peu sombres.
 ------------------------------------------------------------------------
-local TAB_W, TAB_H, TAB_GAP, TAB_OUT = 104, 38, 6, 16
+local TAB_W, TAB_H, TAB_GAP = 100, 30, 10
+local TAB_OUT, TAB_HOVER = 18, 6 -- dépassement de l'onglet ouvert / survolé
 
 function W.Tabs(parent, items, onSelect)
     local holder = CreateFrame("Frame", nil, parent)
     holder:SetSize(TAB_W + TAB_OUT, #items * (TAB_H + TAB_GAP))
     holder.buttons = {}
 
+    -- Longueur et teinte du ruban selon son état
+    local function Paint(tab)
+        local on = holder.selected == tab.key
+        local length = TAB_W + (on and TAB_OUT or tab.hover and TAB_HOVER or 0)
+        local light = on and 1 or tab.hover and 0.88 or 0.70
+        local col = tab.color
+        tab:SetWidth(length)
+        tab.ribbon:SetVertexColor(col[1] * light, col[2] * light, col[3] * light)
+        Theme.Paint(tab.text, (on or tab.hover) and c.tabTextOn or c.tabText)
+        tab:SetFrameLevel(holder:GetFrameLevel() + (on and 2 or 1))
+    end
+
     for i, item in ipairs(items) do
-        local tab = CreateFrame("Button", nil, holder, "BackdropTemplate")
+        local tab = CreateFrame("Button", nil, holder)
         tab.key = item.key
+        tab.color = Theme.marks[(i - 1) % #Theme.marks + 1]
         tab:SetSize(TAB_W, TAB_H)
-        tab.y = -(i - 1) * (TAB_H + TAB_GAP)
-        tab:SetPoint("TOPLEFT", 0, tab.y)
+        tab:SetPoint("TOPLEFT", 0, -(i - 1) * (TAB_H + TAB_GAP))
+
+        tab.ribbon = tab:CreateTexture(nil, "BACKGROUND")
+        tab.ribbon:SetAllPoints()
+        tab.ribbon:SetTexture(Theme.tex.bookmark)
+        -- Ombre à la racine : le ruban semble sortir de sous la couverture
+        local root = tab:CreateTexture(nil, "BORDER")
+        root:SetPoint("TOPLEFT")
+        root:SetPoint("BOTTOMLEFT")
+        root:SetWidth(14)
+        Theme.Shade(root, "HORIZONTAL", 0.6, 0)
+
         tab.text = W.Text(tab, Theme.font.button, "LEFT")
-        tab.text:SetPoint("LEFT", 22, 0)
+        tab.text:SetPoint("LEFT", 16, 0)
         tab.text:SetText(item.label)
+        tab.text:SetShadowColor(0, 0, 0, 0.8)
+        tab.text:SetShadowOffset(1, -1)
 
         tab:SetScript("OnClick", function()
             ns.PlayUISound("IG_CHARACTER_INFO_TAB")
             holder:Select(item.key)
         end)
         tab:SetScript("OnEnter", function(self)
-            if holder.selected ~= self.key then Theme.Paint(self.text, c.tabTextOn) end
+            self.hover = true
+            Paint(self)
         end)
         tab:SetScript("OnLeave", function(self)
-            if holder.selected ~= self.key then Theme.Paint(self.text, c.tabText) end
+            self.hover = false
+            Paint(self)
         end)
         holder.buttons[i] = tab
     end
 
     function holder:Select(key)
         self.selected = key
-        for _, tab in ipairs(self.buttons) do
-            local on = tab.key == key
-            if on then
-                Theme.Surface(tab, "tabOn")
-                tab:SetWidth(TAB_W + TAB_OUT)
-                tab:SetPoint("TOPLEFT", -TAB_OUT, tab.y)
-                tab.text:SetPoint("LEFT", 22 + TAB_OUT, 0)
-                Theme.Paint(tab.text, c.tabTextOn)
-                tab:SetFrameLevel(holder:GetFrameLevel() + 2)
-            else
-                Theme.Surface(tab, "tabOff")
-                tab:SetWidth(TAB_W)
-                tab:SetPoint("TOPLEFT", 0, tab.y)
-                tab.text:SetPoint("LEFT", 22, 0)
-                Theme.Paint(tab.text, c.tabText)
-                tab:SetFrameLevel(holder:GetFrameLevel() + 1)
-            end
-        end
+        for _, tab in ipairs(self.buttons) do Paint(tab) end
         onSelect(key)
     end
 

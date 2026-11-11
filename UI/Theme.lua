@@ -34,6 +34,7 @@ Theme.tex = {
     leather   = MEDIA .. "leather",
     corner    = MEDIA .. "corner",
     ribbon    = MEDIA .. "ribbon",
+    bookmark  = MEDIA .. "bookmark",
     bobber    = MEDIA .. "bobber",
     button    = MEDIA .. "button",
     check     = "Interface\\Buttons\\UI-CheckBox-Check",
@@ -158,13 +159,13 @@ THEMES.carnet = {
     quality = QUALITY_BRIGHT,
     fonts = ALEGREYA, sizes = SIZES_SERIF,
     fontShadow = { 0, 0, 0, 0.6 },
+    -- Marque-pages des onglets (un ruban par onglet)
+    marks = { { 0.66, 0.24, 0.16 }, { 0.16, 0.38, 0.44 }, { 0.58, 0.44, 0.16 }, { 0.40, 0.26, 0.42 } },
     surface = {
         window = { bgFile = tex.leather, border = { 0.04, 0.02, 0.01, 1 } },
         page   = { bgFile = tex.page, border = { 0.03, 0.02, 0.01, 1 } },
         card   = { bgFile = tex.page, border = { 0.03, 0.02, 0.01, 1 } },
         toast  = { bgFile = tex.page, border = { 0.690, 0.522, 0.255, 0.8 } },
-        tabOn  = { bgFile = tex.page, border = "goldDk" },
-        tabOff = { bg = "tab", border = { 0.690, 0.522, 0.255, 0.5 } },
         field  = { bg = "pageDk", border = "goldDk" },
     },
     deco = {
@@ -207,13 +208,13 @@ THEMES.clair = {
     },
     fonts = ALEGREYA, sizes = SIZES_SERIF,
     fontShadow = { 0, 0, 0, 0 },
+    -- Marque-pages des onglets (un ruban par onglet)
+    marks = { { 0.74, 0.32, 0.22 }, { 0.22, 0.48, 0.54 }, { 0.68, 0.53, 0.22 }, { 0.48, 0.33, 0.52 } },
     surface = {
         window = { bgFile = tex.leather, border = { 0.04, 0.02, 0.01, 1 } },
         page   = { bgFile = tex.pageLight, border = { 0.40, 0.30, 0.18, 1 } },
         card   = { bgFile = tex.pageLight, border = { 0.40, 0.30, 0.18, 1 } },
         toast  = { bgFile = tex.pageLight, border = "goldDk" },
-        tabOn  = { bgFile = tex.pageLight, border = "goldDk" },
-        tabOff = { bg = "tab", border = { 0.40, 0.30, 0.18, 0.8 } },
         field  = { bg = "pageDk", border = "goldDk" },
     },
     deco = {
@@ -253,13 +254,13 @@ THEMES.sombre = {
     quality = QUALITY_BRIGHT,
     fonts = FIRA, sizes = SIZES_SANS,
     fontShadow = { 0, 0, 0, 0.35 },
+    -- Marque-pages des onglets (un ruban par onglet)
+    marks = { { 0.72, 0.30, 0.28 }, { 0.24, 0.46, 0.74 }, { 0.70, 0.54, 0.20 }, { 0.50, 0.38, 0.70 } },
     surface = {
         window = { bg = { 0.075, 0.080, 0.090, 0.97 }, border = { 0.20, 0.22, 0.25, 1 } },
         page   = { bg = { 0.110, 0.120, 0.135, 1 }, border = { 0.19, 0.21, 0.24, 1 } },
         card   = { bg = { 0.090, 0.100, 0.110, 0.95 }, border = { 0.22, 0.24, 0.28, 1 } },
         toast  = { bg = { 0.090, 0.100, 0.110, 0.95 }, border = { 0.22, 0.24, 0.28, 1 } },
-        tabOn  = { bg = { 0.110, 0.120, 0.135, 1 }, border = "gold" },
-        tabOff = { bg = "tab", border = { 0.19, 0.21, 0.24, 1 } },
         field  = { bg = "pageDk", border = { 0.24, 0.27, 0.31, 1 } },
     },
     deco = {
@@ -311,6 +312,8 @@ THEMES.wow = {
     },
     fonts = GAME, sizes = SIZES_SANS,
     fontShadow = { 0, 0, 0, 0 },
+    -- Marque-pages des onglets (un ruban par onglet)
+    marks = { { 0.56, 0.07, 0.05 }, { 0.07, 0.22, 0.48 }, { 0.10, 0.36, 0.12 }, { 0.34, 0.10, 0.44 } },
     surface = {
         -- Cadre de métal des fenêtres du jeu, fond de roche
         window   = { panel = "ButtonFrameTemplateNoPortrait", bgFile = BLIZZ.rock },
@@ -322,8 +325,6 @@ THEMES.wow = {
         page      = { atlas = "spellbook-Page-Right-C60", crop = 0.08 },
         card      = { atlas = "spellbook-Page-Right-C60", crop = 0.08 },
         toast    = Tip({ 0.84, 0.74, 0.56, 0.97 }, { 0.55, 0.42, 0.25, 1 }),
-        tabOn    = Tip({ 0.10, 0.10, 0.10, 0.95 }, { 1, 0.82, 0, 1 }),
-        tabOff   = Tip({ 0.05, 0.05, 0.05, 0.9 }, { 0.5, 0.5, 0.5, 1 }),
         field    = { bg = { 0, 0, 0, 0.55 }, border = { 0.35, 0.25, 0.15, 1 } },
     },
     deco = {
@@ -368,9 +369,10 @@ function Theme.Apply(key)
     for name, value in pairs(theme.color) do
         c[name] = { value[1], value[2], value[3], value[4] or 1 }
     end
-    -- Texte des onglets : comme les boutons, sauf avis contraire du style
-    c.tabText = c.tabText or c.inkSoft
-    c.tabTextOn = c.tabTextOn or c.gold
+    -- Texte clair sur les rubans des onglets, sauf avis contraire du style
+    c.tabText = c.tabText or { 0.93, 0.88, 0.78, 1 }
+    c.tabTextOn = c.tabTextOn or { 1, 0.97, 0.90, 1 }
+    Theme.marks = theme.marks
     Copy(Theme.deco, theme.deco)
     Theme.ACCENT_HEX = theme.hex.accent
     Theme.WATER_HEX = theme.hex.water
@@ -441,7 +443,7 @@ function Theme.Backdrop(frame, bg, border, bgFile)
 end
 
 --- Habille un cadre selon son rôle ("window", "page", "card", "toast",
---- "tabOn", "tabOff", "field") et le style choisi. themeKey permet
+--- "field") et le style choisi. themeKey permet
 --- d'utiliser un autre style (aperçus de l'onglet Style).
 function Theme.Surface(frame, kind, themeKey)
     local theme = themeKey and THEMES[themeKey] or current
