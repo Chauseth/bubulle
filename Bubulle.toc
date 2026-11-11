@@ -4,7 +4,7 @@
 ## Notes: Bubulle, your fishing assistant: double right-click to cast, clearer splash sounds and a full fishing journal.
 ## Notes-frFR: Bubulle, ton assistant de pêche : double-clic droit pour lancer, bruit du bouchon mis en avant et carnet de pêche complet.
 ## Author: Alexandre
-## Version: 1.1.0
+## Version: 1.1.1
 ## Category: Professions
 ## Category-frFR: Métiers
 ## SavedVariables: BubulleDB

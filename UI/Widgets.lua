@@ -554,8 +554,12 @@ function W.KeyButton(parent, get, set, width)
             .. (IsShiftKeyDown() and "SHIFT-" or "")
             .. key
         Stop(self)
-        set(combo)
+        -- Même si l'enregistrement échoue, le bouton ne doit pas rester
+        -- bloqué sur « Appuie sur une touche... » : on rafraîchit quoi qu'il
+        -- arrive, et on affiche l'erreur dans le chat pour la comprendre.
+        local ok, err = pcall(set, combo)
         self:Refresh()
+        if not ok then ns.Print("|cffff6060" .. tostring(err) .. "|r") end
     end)
 
     -- Important : définir OnKeyDown active le clavier sur ce bouton, ce qui

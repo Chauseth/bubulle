@@ -245,6 +245,7 @@ step("options toggles", function()
   end
   page.keyButton:Fire("OnClick", "LeftButton"); page.keyButton:Fire("OnKeyDown", "LSHIFT"); page.keyButton:Fire("OnKeyDown", "G")
   assert(ns.db.settings.oneKey == "G", "key "..tostring(ns.db.settings.oneKey))
+  assert(page.keyButton.label:GetText() == "G", "key label: "..tostring(page.keyButton.label:GetText()))
   page.keyButton:Fire("OnClick", "RightButton"); assert(ns.db.settings.oneKey == false)
   print("   settings after:", ns.db.settings.hudScale, ns.db.settings.idleTimeout, ns.db.settings.sfxVolume)
   ns.db.settings.hudScale = 1; ns.db.settings.idleTimeout = 90; ns.db.settings.sfxVolume = 1; ns.db.settings.doubleClickDelay = 0.4

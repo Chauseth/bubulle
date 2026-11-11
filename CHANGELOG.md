@@ -1,5 +1,17 @@
 # Bubulle
 
+## 1.1.1
+
+**English**
+
+- The fishing key now has its own "Bubulle" section in the game's Key Bindings menu (it was hidden in the AddOns section, without Bubulle's name).
+- In the Settings tab, the key button no longer stays stuck on "Press a key..." after you pick a key.
+
+**Français**
+
+- La touche de pêche a maintenant sa propre rubrique « Bubulle » dans le menu Raccourcis du jeu (elle était cachée dans la rubrique AddOns, sans le nom de Bubulle).
+- Dans l'onglet Réglages, le bouton de touche ne reste plus bloqué sur « Appuie sur une touche... » après ton choix.
+
 ## 1.1.0
 
 **English**

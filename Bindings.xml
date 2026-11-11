@@ -1,10 +1,14 @@
 <!--
     Bubulle - Bindings.xml
-    Ajoute la touche de pêche au menu du jeu : Options > Raccourcis > AddOns.
+    Ajoute la touche de pêche au menu du jeu : Options > Raccourcis > Bubulle.
     Le jeu lit ce fichier tout seul (il n'a pas besoin d'être dans le .toc).
+    La catégorie porte le nom d'une variable (BINDING_HEADER_BUBULLE, définie
+    dans Fishing.lua) : le menu moderne affiche son texte comme titre de
+    section. Avec category="ADDONS", la touche se perdait dans la section
+    « AddOns » sans le nom de Bubulle.
 -->
 <Bindings>
-    <Binding name="BUBULLE_FISH" header="BUBULLE" category="ADDONS">
+    <Binding name="BUBULLE_FISH" category="BINDING_HEADER_BUBULLE">
         Bubulle_OnFishKey()
     </Binding>
 </Bindings>
