@@ -25,21 +25,24 @@ local function Build()
     frame:SetSize(340, 66)
     frame:SetPoint("TOP", UIParent, "TOP", 0, -150)
     frame:SetFrameStrata("HIGH")
-    Theme.Backdrop(frame, nil, { c.goldDk[1], c.goldDk[2], c.goldDk[3], 0.8 }, Theme.tex.page)
+    Theme.Surface(frame, "toast")
     frame:Hide()
     W.AttachFader(frame, 0.25)
 
     -- Liseré orange "poisson rouge" sur le bord gauche
     local stripe = frame:CreateTexture(nil, "ARTWORK")
-    stripe:SetPoint("TOPLEFT", 1, -1)
-    stripe:SetPoint("BOTTOMLEFT", 1, 1)
+    local inset = Theme.Inset("toast")
+    stripe:SetPoint("TOPLEFT", inset, -inset)
+    stripe:SetPoint("BOTTOMLEFT", inset, inset)
     stripe:SetWidth(4)
     Theme.Fill(stripe, c.fish)
 
-    local drop = frame:CreateTexture(nil, "BACKGROUND", nil, -8)
-    drop:SetPoint("TOPLEFT", -2, 1)
-    drop:SetPoint("BOTTOMRIGHT", 4, -5)
-    drop:SetColorTexture(0, 0, 0, 0.4)
+    if Theme.deco.drop then
+        local drop = frame:CreateTexture(nil, "BACKGROUND", nil, -8)
+        drop:SetPoint("TOPLEFT", -2, 1)
+        drop:SetPoint("BOTTOMRIGHT", 4, -5)
+        drop:SetColorTexture(0, 0, 0, 0.4)
+    end
 
     -- Bubulle dans sa bulle
     frame.portrait = frame:CreateTexture(nil, "ARTWORK")

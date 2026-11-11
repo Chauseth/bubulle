@@ -135,4 +135,17 @@ def button(img, k):
 
 
 save_rgba(supersample(button, (64, 64)), "button")
+
+# Page claire (thème « Clair ») : papier crème, même grain, auréoles plus
+# discrètes. Ajoutée à la fin pour ne pas changer les autres textures.
+base = np.array([238, 226, 200], np.float32)
+blotch = blur_noise(S, 40) * 0.025 + blur_noise(S, 12) * 0.015
+fibre = blur_noise(S, 0.6) * 0.02
+paper = base[None, None, :] * (1 + blotch[..., None] + fibre[..., None])
+for (cx, cy, r) in [(390, 120, 70), (120, 420, 52)]:
+    d = np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2)
+    ring = np.exp(-((d - r) ** 2) / (2 * 2.5 ** 2)) * 0.05
+    paper *= (1 - ring[..., None] * np.array([0.6, 0.8, 1.0]))
+save_rgb(paper, "page_light")
+
 print("Textures écrites dans", MEDIA)

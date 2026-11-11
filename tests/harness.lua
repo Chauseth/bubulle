@@ -2,6 +2,8 @@
 local ADDON_DIR = arg[1] or "."
 local LOCALE = arg[2] or "frFR"
 local TOCV = tonumber(arg[3] or "16001")
+local THEME = arg[4] -- style à tester (carnet, clair, sombre, wow)
+local reloads = 0
 local events = {}       -- event -> list of frames
 local unitEvents = {}
 local now = 1000
@@ -102,7 +104,9 @@ _G.UnitName = function() return "Chau", "Seth" end
 _G.GetRealmName = function() return "Forever" end
 -- Ancien carnet commun au compte (avant 1.1) : doit revenir à ce personnage
 _G.BubulleDB = { zones = { [1] = { name = "Vieux lac", catches = 2, total = 3, fish = { [6303] = 3 } } },
-  totals = { catches = 2, casts = 4, seconds = 60 }, history = {}, items = { [6303] = { n = "Lutjan", q = 1, c = 3 } } }
+  totals = { catches = 2, casts = 4, seconds = 60 }, history = {}, items = { [6303] = { n = "Lutjan", q = 1, c = 3 } },
+  settings = THEME and { theme = THEME } or nil }
+_G.ReloadUI = function() reloads = reloads + 1 end
 _G.C_AddOns = { GetAddOnMetadata = function() return "1.0.0" end }
 _G.C_Timer = { After = function(d, f) table.insert(timers, {t=now+d, f=f}) end,
   NewTicker = function(d, f) local tk = {d=d,f=f,next=now+d,cancel=false}; tk.Cancel = function(s) s.cancel=true end; table.insert(timers, tk); return tk end }
@@ -296,6 +300,21 @@ step("journal per character", function()
   assert(ns.Journal:Char() == named and named.name == "Chau Seth")
   ns.db.chars["Player-2"] = nil; _G.UnitGUID = oldGUID; ns:Fire("LOGIN")
   assert(ns.Journal:Char() == char, "back to own journal")
+end)
+step("style tab", function()
+  assert(ns.Theme.key == (THEME or "carnet"), "theme applied: " .. tostring(ns.Theme.key))
+  ns.Window:Open("style"); local page = ns.Window.pages.style
+  assert(#page.cards == 4, "4 style cards")
+  local target
+  for _, card in ipairs(page.cards) do
+    card:Fire("OnEnter"); card:Fire("OnLeave")
+    if card.key ~= ns.Theme.key then target = card end
+  end
+  local before = reloads
+  target:Fire("OnClick")
+  assert(ns.db.settings.theme == target.key and reloads == before + 1, "theme switch + reload")
+  ns.db.settings.theme = ns.Theme.key
+  ns.Window:Open("session")
 end)
 step("reset settings + clear journal", function()
   ns.db.settings.hudScale = 1.3; ns.Fishing:SetKey("F"); ns.db.welcomed = true

@@ -77,6 +77,7 @@ function W.GiltFrame(frame, inset, color, layer)
         right:SetPoint("TOPRIGHT", -offset, -offset)
         right:SetPoint("BOTTOMRIGHT", -offset, offset)
     end
+    if not Theme.deco.gilt then return end -- styles sans filets dorés
     color = color or c.goldDk
     Edge(0, 0.75)
     if inset then
@@ -232,28 +233,38 @@ function W.RestorePosition(frame, key, point, relativePoint, x, y)
 end
 
 ------------------------------------------------------------------------
--- Boutons : cuir sombre, filet doré, lettres dorées
+-- Boutons : couleurs du style (cuir et lettres dorées pour le carnet),
+-- ou le bouton rouge du jeu pour le style « wow »
 ------------------------------------------------------------------------
 local function ButtonColors(button)
     local hover = button.hover
+    if button.blizzard then
+        Theme.Paint(button.label, hover and c.btnTextHi or c.btnText)
+        return
+    end
     if button.primary then
-        button:SetBackdropColor(hover and 0.42 or 0.34, hover and 0.27 or 0.21, hover and 0.11 or 0.08, 1)
+        local bg = hover and c.primaryHi or c.primary
+        button:SetBackdropColor(bg[1], bg[2], bg[3], 1)
         button:SetBackdropBorderColor(c.gold[1], c.gold[2], c.gold[3], 1)
-        Theme.Paint(button.label, hover and c.ink or c.gold)
+        Theme.Paint(button.label, hover and c.primaryTextHi or c.primaryText)
     else
         local bg = hover and c.tabHi or c.tab
-        button:SetBackdropColor(bg[1], bg[2], bg[3], 1)
+        button:SetBackdropColor(bg[1], bg[2], bg[3], bg[4] or 1)
         local border = hover and c.gold or c.goldDk
         button:SetBackdropBorderColor(border[1], border[2], border[3], hover and 1 or 0.7)
-        Theme.Paint(button.label, hover and c.gold or c.inkSoft)
+        Theme.Paint(button.label, hover and c.btnTextHi or c.btnText)
     end
 end
 
 --- Bouton. style = "primary" pour le bouton principal.
 function W.Button(parent, text, width, height, style)
-    local button = CreateFrame("Button", nil, parent, "BackdropTemplate")
+    local blizzard = Theme.deco.widgets == "blizzard"
+    local button = CreateFrame("Button", nil, parent, blizzard and "UIPanelButtonTemplate" or "BackdropTemplate")
     button:SetSize(width or 110, height or 26)
-    button:SetBackdrop({ bgFile = Theme.WHITE, edgeFile = Theme.WHITE, edgeSize = 1 })
+    button.blizzard = blizzard
+    if not blizzard then
+        button:SetBackdrop({ bgFile = Theme.WHITE, edgeFile = Theme.WHITE, edgeSize = 1 })
+    end
     button.primary = style == "primary"
 
     button.label = W.Text(button, Theme.font.button, "CENTER")
@@ -269,24 +280,25 @@ function W.Button(parent, text, width, height, style)
         ButtonColors(self)
     end
 
-    button:SetScript("OnEnter", function(self)
+    -- HookScript (et non SetScript) : le bouton du jeu garde ses effets.
+    button:HookScript("OnEnter", function(self)
         self.hover = true
         ButtonColors(self)
     end)
-    button:SetScript("OnLeave", function(self)
+    button:HookScript("OnLeave", function(self)
         self.hover = false
         ButtonColors(self)
     end)
-    button:SetScript("OnMouseDown", function(self)
+    button:HookScript("OnMouseDown", function(self)
         if self:IsEnabled() then
             self.label:SetPoint("CENTER", 1, -1)
         end
     end)
-    button:SetScript("OnMouseUp", function(self)
+    button:HookScript("OnMouseUp", function(self)
         self.label:SetPoint("CENTER", 0, 0)
     end)
-    button:SetScript("OnEnable", function(self) self:SetAlpha(1) end)
-    button:SetScript("OnDisable", function(self) self:SetAlpha(0.45) end)
+    button:HookScript("OnEnable", function(self) self:SetAlpha(1) end)
+    button:HookScript("OnDisable", function(self) self:SetAlpha(0.45) end)
     button:HookScript("OnClick", function()
         ns.PlayUISound("IG_MAINMENU_OPTION_CHECKBOX_ON")
     end)
@@ -346,7 +358,7 @@ function W.BrassClose(parent, size)
         t:SetSize(size * 0.42, 2)
         t:SetPoint("CENTER")
         t:SetRotation(math.rad(angle))
-        t:SetColorTexture(0.29, 0.20, 0.07, 1)
+        Theme.Fill(t, c.closeX)
     end
     button:SetScript("OnEnter", function() disc:SetVertexColor(1.15, 1.1, 1, 1) end)
     button:SetScript("OnLeave", function() disc:SetVertexColor(1, 1, 1, 1) end)
@@ -380,6 +392,22 @@ function W.Checkbox(parent, label, tooltip, get, set)
     end
     local function Edge(color) Theme.Fill(edge, color) end
     Edge(c.goldDk)
+
+    -- Style « wow » : la case à cocher du jeu
+    local hilite
+    if Theme.deco.widgets == "blizzard" then
+        edge:SetTexture(Theme.BLIZZ.checkUp)
+        edge:ClearAllPoints()
+        edge:SetPoint("CENTER")
+        edge:SetSize(24, 24)
+        inside:Hide()
+        hilite = box:CreateTexture(nil, "OVERLAY", nil, -1)
+        hilite:SetTexture(Theme.BLIZZ.checkHi)
+        hilite:SetBlendMode("ADD")
+        hilite:SetAllPoints(edge)
+        hilite:Hide()
+        Edge = function(color) hilite:SetShown(color == c.gold) end
+    end
 
     local mark = box:CreateTexture(nil, "OVERLAY")
     mark:SetSize(22, 22)
@@ -616,14 +644,14 @@ function W.Tabs(parent, items, onSelect)
         for _, tab in ipairs(self.buttons) do
             local on = tab.key == key
             if on then
-                Theme.Backdrop(tab, nil, c.goldDk, Theme.tex.page)
+                Theme.Surface(tab, "tabOn")
                 tab:SetWidth(TAB_W + TAB_OUT)
                 tab:SetPoint("TOPLEFT", -TAB_OUT, tab.y)
                 tab.text:SetPoint("LEFT", 22 + TAB_OUT, 0)
                 Theme.Paint(tab.text, c.gold)
                 tab:SetFrameLevel(holder:GetFrameLevel() + 2)
             else
-                Theme.Backdrop(tab, c.tab, { c.goldDk[1], c.goldDk[2], c.goldDk[3], 0.5 })
+                Theme.Surface(tab, "tabOff")
                 tab:SetWidth(TAB_W)
                 tab:SetPoint("TOPLEFT", 0, tab.y)
                 tab.text:SetPoint("LEFT", 22, 0)
@@ -661,7 +689,9 @@ end
 function W.ItemIcon(parent, size)
     local frame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     frame:SetSize(size, size)
-    Theme.Backdrop(frame, c.pageDk, c.goldDk)
+    Theme.Surface(frame, "field")
+    local br, bg, bb, ba = frame:GetBackdropBorderColor()
+    local baseBorder = br and { br, bg, bb, ba } or c.goldDk
 
     frame.icon = frame:CreateTexture(nil, "ARTWORK")
     frame.icon:SetPoint("TOPLEFT", 2, -2)
@@ -689,7 +719,7 @@ function W.ItemIcon(parent, size)
             local r, g, b = ns.QualityRGB(quality)
             self:SetBackdropBorderColor(r, g, b, 0.9)
         else
-            self:SetBackdropBorderColor(c.goldDk[1], c.goldDk[2], c.goldDk[3], 0.8)
+            self:SetBackdropBorderColor(baseBorder[1], baseBorder[2], baseBorder[3], (baseBorder[4] or 1) * 0.8)
         end
         self.count:SetText((count and count > 1) and count or "")
     end

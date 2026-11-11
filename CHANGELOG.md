@@ -1,5 +1,15 @@
 # Bubulle
 
+## 1.2.0
+
+**English**
+
+- New "Style" tab: four looks for Bubulle (Notebook, Light, Dark, WoW).
+
+**Français**
+
+- Nouvel onglet « Style » : quatre looks pour Bubulle (Carnet, Clair, Sombre, WoW).
+
 ## 1.1.1
 
 **English**

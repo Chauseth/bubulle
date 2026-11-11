@@ -46,6 +46,7 @@ ns.defaults = {
         hudAlways         = false,
         hudLocked         = false,
         hudScale          = 1.0,
+        theme             = "carnet", -- style : carnet, clair, sombre ou wow
         minimapButton     = true,   -- bouton rond au bord de la minicarte
         minimapAngle      = 215,    -- sa position (en degrés)
         -- Bubulle
@@ -226,6 +227,10 @@ function ns:ResetSettings()
     ns:Fire("SETTINGS_CHANGED")
     ns.Print(L.RESET_SETTINGS_DONE)
     ns.Window:ShowWelcome()
+    -- Le style par défaut ne s'applique qu'après un rechargement.
+    if ns.Theme.key ~= db.settings.theme then
+        ns:AskReload(L.CONFIRM_THEME_RELOAD)
+    end
 end
 
 --- Efface tout le carnet : prises, zones, statistiques et la mémoire des
@@ -261,6 +266,19 @@ end
 
 function ns:AskResetSettings()
     Confirm("BUBULLE_RESET_SETTINGS", L.CONFIRM_RESET_SETTINGS, function() ns:ResetSettings() end)
+end
+
+--- Changer de style : on l'enregistre, puis on recharge l'interface.
+function ns:AskTheme(key)
+    local name = L["THEME_" .. key:upper()] or key
+    Confirm("BUBULLE_THEME", L.CONFIRM_THEME:format(name), function()
+        ns.db.settings.theme = key
+        ReloadUI()
+    end)
+end
+
+function ns:AskReload(text)
+    Confirm("BUBULLE_RELOAD", text, function() ReloadUI() end)
 end
 
 function ns:AskClearJournal()

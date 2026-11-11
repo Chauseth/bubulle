@@ -42,11 +42,13 @@ local frame
 
 local function BuildHeader()
     -- Bout de scotch qui "tient" la fiche
-    local tape = frame:CreateTexture(nil, "OVERLAY")
-    tape:SetSize(84, 20)
-    tape:SetPoint("CENTER", frame, "TOP", 18, 0)
-    tape:SetColorTexture(0.80, 0.72, 0.55, 0.38)
-    tape:SetRotation(math.rad(-2.5))
+    if Theme.deco.tape then
+        local tape = frame:CreateTexture(nil, "OVERLAY")
+        tape:SetSize(84, 20)
+        tape:SetPoint("CENTER", frame, "TOP", 18, 0)
+        Theme.Fill(tape, c.tape)
+        tape:SetRotation(math.rad(-2.5))
+    end
 
     frame.dot = frame:CreateTexture(nil, "ARTWORK")
     frame.dot:SetSize(6, 6)
@@ -174,7 +176,7 @@ local function Build()
     frame = CreateFrame("Frame", "BubulleHUD", UIParent, "BackdropTemplate")
     frame:SetSize(WIDTH, HEIGHT)
     frame:SetFrameStrata("MEDIUM")
-    Theme.Backdrop(frame, nil, { 0.03, 0.02, 0.01, 1 }, Theme.tex.page)
+    Theme.Surface(frame, "card")
     frame:Hide()
     W.AttachFader(frame, 0.2)
 
@@ -183,10 +185,12 @@ local function Build()
     inner:SetPoint("TOPLEFT", 4, -4)
     inner:SetPoint("BOTTOMRIGHT", -4, 4)
     W.GiltFrame(inner, nil, { c.goldDk[1], c.goldDk[2], c.goldDk[3], 0.5 }, "BORDER")
-    local drop = frame:CreateTexture(nil, "BACKGROUND", nil, -8)
-    drop:SetPoint("TOPLEFT", -3, 1)
-    drop:SetPoint("BOTTOMRIGHT", 5, -6)
-    drop:SetColorTexture(0, 0, 0, 0.4)
+    if Theme.deco.drop then
+        local drop = frame:CreateTexture(nil, "BACKGROUND", nil, -8)
+        drop:SetPoint("TOPLEFT", -3, 1)
+        drop:SetPoint("BOTTOMRIGHT", 5, -6)
+        drop:SetColorTexture(0, 0, 0, 0.4)
+    end
 
     BuildHeader()
     BuildAssistant()
@@ -280,7 +284,7 @@ function HUD:UpdateGear()
     end
     if ns.Fishing.OLD_SCHOOL then
         if not ns.Fishing:HasPole() then
-            parts[#parts + 1] = "|cffe67162" .. L.HUD_NO_POLE .. "|r"
+            parts[#parts + 1] = "|cff" .. Theme.Hex(c.danger) .. L.HUD_NO_POLE .. "|r"
         else
             local lure = ns.Fishing:GetLureMinutes()
             parts[#parts + 1] = lure and L.HUD_LURE:format(lure) or ("|cff" .. Theme.FAINT_HEX .. L.HUD_NO_LURE .. "|r")

@@ -132,18 +132,21 @@ end
 local function CreatePage(parent, side)
     local page = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     page:SetSize(PAGE_W, BOOK_H - COVER * 2)
-    Theme.Backdrop(page, nil, { 0.03, 0.02, 0.01, 1 }, Theme.tex.page)
+    Theme.Surface(page, "page")
     W.GiltFrame(page, 9, c.goldDk, "BORDER")
 
     -- Ombre vers la reliure : la page "plonge" dans le pli.
-    local shade = page:CreateTexture(nil, "BORDER", nil, -1)
-    shade:SetWidth(46)
-    shade:SetPoint("TOP" .. (side == "left" and "RIGHT" or "LEFT"))
-    shade:SetPoint("BOTTOM" .. (side == "left" and "RIGHT" or "LEFT"))
-    if side == "left" then
-        Theme.Shade(shade, "HORIZONTAL", 0, 0.55)
-    else
-        Theme.Shade(shade, "HORIZONTAL", 0.55, 0)
+    local depth = Theme.deco.pageShade
+    if depth then
+        local shade = page:CreateTexture(nil, "BORDER", nil, -1)
+        shade:SetWidth(46)
+        shade:SetPoint("TOP" .. (side == "left" and "RIGHT" or "LEFT"))
+        shade:SetPoint("BOTTOM" .. (side == "left" and "RIGHT" or "LEFT"))
+        if side == "left" then
+            Theme.Shade(shade, "HORIZONTAL", 0, depth)
+        else
+            Theme.Shade(shade, "HORIZONTAL", depth, 0)
+        end
     end
 
     -- Zone de contenu (dans les marges)
@@ -153,6 +156,7 @@ local function CreatePage(parent, side)
 
     page.folio = W.Text(page, Theme.font.tiny, "CENTER")
     page.folio:SetPoint("BOTTOM", 0, 14)
+    page.folio:SetShown(Theme.deco.folio)
     return page
 end
 
@@ -620,6 +624,97 @@ function Window:RefreshOptions()
 end
 
 ------------------------------------------------------------------------
+-- Double page "Style" : une carte par style, avec un petit aperçu peint
+-- dans les couleurs et la police de ce style.
+------------------------------------------------------------------------
+local CARD_H, CARD_GAP = 88, 10
+
+local function StyleCard(parent, key)
+    local card = CreateFrame("Button", nil, parent, "BackdropTemplate")
+    card:SetHeight(CARD_H)
+    card.key = key
+
+    -- Aperçu : un bout de page du style, avec son titre et son filet
+    local swatch = CreateFrame("Frame", nil, card, "BackdropTemplate")
+    swatch:SetSize(118, CARD_H - 16)
+    swatch:SetPoint("LEFT", 8, 0)
+    Theme.Surface(swatch, "page", key)
+    local palette = Theme.THEMES[key].color
+    local inset = Theme.THEMES[key].surface.page.inset or 0
+    local sample = swatch:CreateFontString(nil, "OVERLAY")
+    local file, sizes = Theme.FontFile(key, "title")
+    sample:SetFont(file, sizes.title, "")
+    sample:SetPoint("TOPLEFT", 10 + inset / 2, -8 - inset / 2)
+    sample:SetText("Bubulle")
+    sample:SetTextColor(palette.gold[1], palette.gold[2], palette.gold[3])
+    local rule = swatch:CreateTexture(nil, "ARTWORK")
+    rule:SetHeight(1)
+    rule:SetPoint("TOPLEFT", sample, "BOTTOMLEFT", 0, -5)
+    rule:SetPoint("RIGHT", -10 - inset / 2, 0)
+    Theme.Fill(rule, palette.line)
+    local body = swatch:CreateFontString(nil, "OVERLAY")
+    local textFile = Theme.FontFile(key, "text")
+    body:SetFont(textFile, sizes.small, "")
+    body:SetPoint("TOPLEFT", rule, "BOTTOMLEFT", 0, -5)
+    body:SetText("12  " .. (L.STAT_CATCHES or ""))
+    body:SetTextColor(palette.ink[1], palette.ink[2], palette.ink[3])
+
+    card.name = W.Text(card, Theme.font.heading)
+    card.name:SetPoint("TOPLEFT", swatch, "TOPRIGHT", 14, -4)
+    card.name:SetText(L["THEME_" .. key:upper()])
+    card.desc = W.Text(card, Theme.font.small)
+    card.desc:SetPoint("TOPLEFT", card.name, "BOTTOMLEFT", 0, -4)
+    card.desc:SetPoint("RIGHT", -10, 0)
+    card.desc:SetWordWrap(true)
+    card.desc:SetText(L["THEME_" .. key:upper() .. "_DESC"])
+    card.current = W.Text(card, Theme.font.tiny)
+    card.current:SetPoint("BOTTOMLEFT", swatch, "BOTTOMRIGHT", 14, 4)
+    card.current:SetText(L.STYLE_CURRENT)
+
+    local active = Theme.key == key
+    local function Paint(hover)
+        Theme.Surface(card, "field")
+        local border = (active or hover) and c.gold or c.goldDk
+        card:SetBackdropBorderColor(border[1], border[2], border[3], (active or hover) and 1 or 0.6)
+    end
+    card.current:SetShown(active)
+    Paint(false)
+    card:SetScript("OnEnter", function() Paint(true) end)
+    card:SetScript("OnLeave", function() Paint(false) end)
+    card:SetScript("OnClick", function()
+        if active then return end
+        ns.PlayUISound("IG_MAINMENU_OPTION_CHECKBOX_ON")
+        ns:AskTheme(key)
+    end)
+    return card
+end
+
+local function BuildStyleSpread(spread, left, right)
+    local head = Header(left, true)
+    head:Set(L.KICKER_STYLE, L.STYLE_TITLE, L.STYLE_SUB)
+
+    spread.cards = {}
+    for i, key in ipairs(Theme.ORDER) do
+        local card = StyleCard(left, key)
+        card:SetPoint("TOPLEFT", 0, -82 - (i - 1) * (CARD_H + CARD_GAP))
+        card:SetPoint("RIGHT", 0, 0)
+        spread.cards[i] = card
+    end
+
+    -- Page de droite : Bubulle explique
+    local rightHead = Header(right, true)
+    rightHead:Set(L.KICKER_STYLE, L.STYLE_RIGHT_TITLE, "")
+    local mascot = ns.Mascot:CreateModel(right, 180)
+    mascot:SetPoint("TOP", 0, -110)
+    local say = W.Text(right, Theme.font.hand, "CENTER")
+    say:SetPoint("TOPLEFT", mascot, "BOTTOMLEFT", -60, -14)
+    say:SetPoint("TOPRIGHT", mascot, "BOTTOMRIGHT", 60, -14)
+    say:SetWordWrap(true)
+    say:SetSpacing(3)
+    say:SetText(L.STYLE_SAY)
+end
+
+------------------------------------------------------------------------
 -- Écran d'accueil (première ouverture) : choisir sa touche de pêche.
 -- Une double page à part, posée par-dessus les autres.
 ------------------------------------------------------------------------
@@ -698,35 +793,53 @@ local function DecorateCover(book)
     deco:SetAllPoints()
     deco:SetFrameLevel(book:GetFrameLevel() + 30)
 
+    local style = Theme.deco
+
     -- Reliure entre les pages
-    local spine = book:CreateTexture(nil, "ARTWORK")
-    spine:SetPoint("TOP", 0, -COVER + 2)
-    spine:SetPoint("BOTTOM", 0, COVER - 2)
-    spine:SetWidth(SPINE + 4)
-    spine:SetColorTexture(0.05, 0.03, 0.02, 0.85)
-
-    -- Signet rouge qui dépasse du bas du carnet
-    local ribbon = deco:CreateTexture(nil, "ARTWORK")
-    ribbon:SetTexture(Theme.tex.ribbon)
-    ribbon:SetSize(18, BOOK_H - 10)
-    ribbon:SetPoint("TOP", 10, -10)
-    ribbon:SetPoint("BOTTOM", 10, -44)
-
-    -- Coins en laiton (une seule image, retournée pour chaque coin)
-    local corners = {
-        { "TOPLEFT", 0, 1, 0, 1 }, { "TOPRIGHT", 1, 0, 0, 1 },
-        { "BOTTOMLEFT", 0, 1, 1, 0 }, { "BOTTOMRIGHT", 1, 0, 1, 0 },
-    }
-    for _, corner in ipairs(corners) do
-        local t = deco:CreateTexture(nil, "OVERLAY")
-        t:SetTexture(Theme.tex.corner)
-        t:SetSize(42, 42)
-        t:SetPoint(corner[1], 0, 0)
-        t:SetTexCoord(corner[2], corner[3], corner[4], corner[5])
+    if style.spine then
+        local spine = book:CreateTexture(nil, "ARTWORK")
+        spine:SetPoint("TOP", 0, -COVER + 2)
+        spine:SetPoint("BOTTOM", 0, COVER - 2)
+        spine:SetWidth(SPINE + 4)
+        Theme.Fill(spine, c.spine)
     end
 
-    local close = W.BrassClose(deco, 30)
-    close:SetPoint("CENTER", book, "TOPRIGHT", -2, -2)
+    -- Signet rouge qui dépasse du bas du carnet
+    if style.ribbon then
+        local ribbon = deco:CreateTexture(nil, "ARTWORK")
+        ribbon:SetTexture(Theme.tex.ribbon)
+        ribbon:SetSize(18, BOOK_H - 10)
+        ribbon:SetPoint("TOP", 10, -10)
+        ribbon:SetPoint("BOTTOM", 10, -44)
+    end
+
+    -- Coins en laiton (une seule image, retournée pour chaque coin)
+    if style.corners then
+        local corners = {
+            { "TOPLEFT", 0, 1, 0, 1 }, { "TOPRIGHT", 1, 0, 0, 1 },
+            { "BOTTOMLEFT", 0, 1, 1, 0 }, { "BOTTOMRIGHT", 1, 0, 1, 0 },
+        }
+        for _, corner in ipairs(corners) do
+            local t = deco:CreateTexture(nil, "OVERLAY")
+            t:SetTexture(Theme.tex.corner)
+            t:SetSize(42, 42)
+            t:SetPoint(corner[1], 0, 0)
+            t:SetTexCoord(corner[2], corner[3], corner[4], corner[5])
+        end
+    end
+
+    -- Bouton de fermeture : en laiton, du jeu, ou une simple croix
+    local close
+    if style.close == "blizzard" then
+        close = CreateFrame("Button", nil, deco, "UIPanelCloseButton")
+        close:SetPoint("TOPRIGHT", book, "TOPRIGHT", -4, -4)
+    elseif style.close == "glyph" then
+        close = W.GlyphButton(deco, "close", 20)
+        close:SetPoint("TOPRIGHT", book, "TOPRIGHT", -6, -6)
+    else
+        close = W.BrassClose(deco, 30)
+        close:SetPoint("CENTER", book, "TOPRIGHT", -2, -2)
+    end
     close:SetScript("OnClick", function() book:Hide() end)
     W.SetTooltip(close, CLOSE or "Close")
 end
@@ -739,15 +852,17 @@ local function Build()
     frame:SetSize(BOOK_W, BOOK_H)
     frame:SetFrameStrata("HIGH")
     frame:SetToplevel(true)
-    Theme.Backdrop(frame, nil, { 0.04, 0.02, 0.01, 1 }, Theme.tex.leather)
+    Theme.Surface(frame, "window")
     frame:Hide()
     tinsert(UISpecialFrames, "BubulleWindow") -- Échap ferme la fenêtre
 
     -- Ombre portée sous le carnet
-    local drop = frame:CreateTexture(nil, "BACKGROUND", nil, -8)
-    drop:SetPoint("TOPLEFT", -6, 2)
-    drop:SetPoint("BOTTOMRIGHT", 8, -10)
-    drop:SetColorTexture(0, 0, 0, 0.45)
+    if Theme.deco.drop then
+        local drop = frame:CreateTexture(nil, "BACKGROUND", nil, -8)
+        drop:SetPoint("TOPLEFT", -6, 2)
+        drop:SetPoint("BOTTOMRIGHT", 8, -10)
+        drop:SetColorTexture(0, 0, 0, 0.45)
+    end
 
     -- Filet doré gravé dans le cuir
     local gilt = CreateFrame("Frame", nil, frame)
@@ -761,6 +876,7 @@ local function Build()
         { key = "session", build = BuildSessionSpread, refresh = RefreshSessionSpread },
         { key = "journal", build = BuildJournalSpread, refresh = RefreshJournalSpread },
         { key = "options", build = BuildOptionsSpread },
+        { key = "style", build = BuildStyleSpread },
     }
     for i, entry in ipairs(builders) do
         local spread, left, right = CreateSpread(frame, i * 2 - 1)
@@ -776,6 +892,7 @@ local function Build()
         { key = "session", label = L.TAB_SESSION },
         { key = "journal", label = L.TAB_JOURNAL },
         { key = "options", label = L.TAB_OPTIONS },
+        { key = "style", label = L.TAB_STYLE },
     }, function(key)
         for pageKey, spread in pairs(pages) do
             spread:SetShown(pageKey == key)
