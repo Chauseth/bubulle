@@ -65,8 +65,27 @@ end
 
 local char -- le carnet du personnage connecté
 
-function Journal:CharKey()
+--- Nom complet du personnage. Sur Forever, un nom peut être composé
+--- (« Chau Seth ») : UnitName renvoie alors le prénom puis le nom.
+--- Sur Retail, la 2e valeur est le royaume, vide pour son propre perso.
+function Journal:CharName()
+    local first, last = UnitName("player")
+    first = first or "?"
+    if last and last ~= "" then return first .. " " .. last end
+    return first
+end
+
+--- Ancienne clé (nom + royaume) : ne distinguait pas « Chau Seth » de « Chau Kobo ».
+local function NameKey()
     return (UnitName("player") or "?") .. "-" .. (GetRealmName() or "?")
+end
+
+--- Clé du carnet : l'identifiant unique (GUID) du personnage, qui ne change
+--- jamais, même si on renomme le perso. Repli sur le nom s'il n'est pas prêt.
+function Journal:CharKey()
+    local guid = UnitGUID and UnitGUID("player")
+    if guid and guid ~= "" then return guid end
+    return NameKey()
 end
 
 --- Le carnet du personnage connecté.
@@ -84,12 +103,33 @@ local function Sources()
     return { char }
 end
 
-ns:Listen("DB_READY", function()
+--- Note le nom et le royaume dans le carnet (pratique pour s'y retrouver).
+local function Stamp()
+    char.name = Journal:CharName()
+    char.realm = GetRealmName and GetRealmName() or nil
+end
+
+--- Trouve (ou crée) le carnet du personnage connecté.
+local function Bind()
     local db = ns.db
     local key = Journal:CharKey()
-    db.chars[key] = db.chars[key] or NewCharData()
+    if not db.chars[key] then
+        -- Carnet rangé sous l'ancienne clé par nom : il passe sous le GUID.
+        local old = NameKey()
+        if old ~= key and db.chars[old] then
+            db.chars[key], db.chars[old] = db.chars[old], nil
+        else
+            db.chars[key] = NewCharData()
+        end
+    end
     char = db.chars[key]
     Fill(char)
+    Stamp()
+end
+
+ns:Listen("DB_READY", function()
+    local db = ns.db
+    Bind()
 
     -- Avant la 1.1, le carnet était commun à tout le compte : il revient
     -- au premier personnage qui se connecte avec la nouvelle version.
@@ -108,6 +148,9 @@ ns:Listen("DB_READY", function()
     end
 end)
 
+-- Au chargement, le GUID n'est pas toujours prêt : on revérifie à la connexion.
+ns:Listen("LOGIN", Bind)
+
 --- Efface le carnet de ce personnage (ou de tous).
 function Journal:Clear(all)
     local db = ns.db
@@ -118,6 +161,7 @@ function Journal:Clear(all)
     end
     wipe(char)
     Fill(char)
+    Stamp()
 end
 
 function Journal:AddCast()

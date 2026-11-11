@@ -425,7 +425,7 @@ local function RefreshJournalSpread(spread)
     if selectedZone and not Journal:GetZone(selectedZone) then
         selectedZone = false
     end
-    local owner = ns.db.settings.journalAllChars and L.JOURNAL_ALL_CHARS_SHORT or (UnitName("player") or "")
+    local owner = ns.db.settings.journalAllChars and L.JOURNAL_ALL_CHARS_SHORT or Journal:CharName()
     spread.zonesHead:Set(L.KICKER_JOURNAL .. " · " .. owner, L.JOURNAL_ZONES, L.JOURNAL_ZONES_SUB:format(zoneCount))
     spread.allChars:Refresh()
     spread.zones:SetData(zones)

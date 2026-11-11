@@ -93,7 +93,8 @@ _G.wipe = function(t) for k in pairs(t) do t[k]=nil end return t end
 _G.tinsert = table.insert; _G.strtrim = function(s) return (s:gsub("^%s+",""):gsub("%s+$","")) end
 _G.UISpecialFrames = {}
 _G.GetLocale = function() return LOCALE end
-_G.UnitName = function() return "Thrall" end
+-- Forever : nom composé « Chau Seth » (UnitName renvoie prénom, nom)
+_G.UnitName = function() return "Chau", "Seth" end
 _G.GetRealmName = function() return "Forever" end
 -- Ancien carnet commun au compte (avant 1.1) : doit revenir à ce personnage
 _G.BubulleDB = { zones = { [1] = { name = "Vieux lac", catches = 2, total = 3, fish = { [6303] = 3 } } },
@@ -268,7 +269,8 @@ step("minimap button", function()
   SlashCmdList.BUBULLE("minimap"); assert(not b:IsShown()); SlashCmdList.BUBULLE("minimap"); assert(b:IsShown())
 end)
 step("journal per character", function()
-  local char = ns.Journal:Char(); assert(ns.db.chars["Thrall-Forever"] == char)
+  local char = ns.Journal:Char(); assert(ns.db.chars["Player-1"] == char, "journal not keyed by GUID")
+  assert(char.name == "Chau Seth", "full name: " .. tostring(char.name)); assert(ns.Journal:CharName() == "Chau Seth")
   assert(ns.db.zones == nil and ns.db.totals == nil, "legacy journal not migrated")
   assert(char.zones[1] and char.species[6303] and ns.db.items[6303].c == nil, "legacy data lost")
   ns.db.chars["Jaina-Forever"] = { zones = { [1] = { name = "Vieux lac", catches = 5, total = 5, fish = { [999] = 5 } } },
@@ -278,6 +280,15 @@ step("journal per character", function()
   assert(ns.Journal:GetTotals().catches == mine + 5, "all chars totals"); assert(ns.Journal:GetZone(1).catches == 7)
   ns.Window:Open("journal"); local page = ns.Window.pages.journal; page.allChars:Fire("OnClick")
   assert(ns.db.settings.journalAllChars == false); assert(ns.Journal:GetTotals().catches == mine)
+  -- Carnet rangé sous l'ancienne clé par nom : repris sous le GUID du perso
+  local oldGUID = UnitGUID
+  local named = { zones = {}, totals = { catches = 9, casts = 9, seconds = 1 }, history = {}, species = {} }
+  ns.db.chars["Chau-Forever"] = named
+  _G.UnitGUID = function() return "Player-2" end; ns:Fire("LOGIN")
+  assert(ns.db.chars["Player-2"] == named and ns.db.chars["Chau-Forever"] == nil, "name key not moved to GUID")
+  assert(ns.Journal:Char() == named and named.name == "Chau Seth")
+  ns.db.chars["Player-2"] = nil; _G.UnitGUID = oldGUID; ns:Fire("LOGIN")
+  assert(ns.Journal:Char() == char, "back to own journal")
 end)
 step("reset settings + clear journal", function()
   ns.db.settings.hudScale = 1.3; ns.Fishing:SetKey("F"); ns.db.welcomed = true
