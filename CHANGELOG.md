@@ -4,29 +4,27 @@
 
 **English**
 
-- The fishing key now has its own "Bubulle" section in the game's Key Bindings menu (it was hidden in the AddOns section, without Bubulle's name).
-- Fixed a "SetTexCoord ... mask" error shown when changing a setting. It came from the round minimap icon, and it stopped the Settings tab from refreshing (the key button stayed on "Press a key...").
+- The fishing key has its own "Bubulle" section in Key Bindings.
+- Fixed an error when changing a setting.
 
 **Français**
 
-- La touche de pêche a maintenant sa propre rubrique « Bubulle » dans le menu Raccourcis du jeu (elle était cachée dans la rubrique AddOns, sans le nom de Bubulle).
-- Correction de l'erreur « SetTexCoord ... mask » qui apparaissait en changeant un réglage. Elle venait de l'icône ronde de la minicarte, et empêchait l'onglet Réglages de se mettre à jour (le bouton de touche restait sur « Appuie sur une touche... »).
+- La touche de pêche a sa propre rubrique « Bubulle » dans les Raccourcis.
+- Correction d'une erreur en changeant un réglage.
 
 ## 1.1.0
 
 **English**
 
-- The fishing key now also appears in the game's menu: Options > Key Bindings > AddOns > Bubulle. Change it there or in Bubulle's Settings tab, both stay in sync.
-- Two new buttons in the Settings tab: "Default settings" (also clears the fishing key and shows the welcome screen again) and "Clear journal". Both ask for confirmation.
-- Each character now has its own fishing journal. A "All my characters" box in the Journal tab shows every character together. Your existing journal goes to the first character you log in with. Characters are told apart by their unique ID, so WoW Forever names that share a first name (like "Chau Seth" and "Chau Kobo") get separate journals.
-- New license file (MIT).
+- Fishing key in the game's Key Bindings menu.
+- "Default settings" and "Clear journal" buttons.
+- One fishing journal per character, with an "All my characters" option.
 
 **Français**
 
-- La touche de pêche apparaît aussi dans le menu du jeu : Options > Raccourcis > AddOns > Bubulle. Tu peux la changer là ou dans l'onglet Réglages de Bubulle, les deux restent synchronisés.
-- Deux nouveaux boutons dans l'onglet Réglages : « Réglages par défaut » (efface aussi la touche de pêche et réaffiche l'écran d'accueil) et « Vider le carnet ». Les deux demandent confirmation.
-- Chaque personnage a maintenant son propre carnet. La case « Tous mes personnages » de l'onglet Carnet les affiche tous ensemble. Ton carnet actuel revient au premier personnage avec lequel tu te connectes. Les personnages sont reconnus par leur identifiant unique : deux noms Forever avec le même prénom (comme « Chau Seth » et « Chau Kobo ») ont bien chacun leur carnet.
-- Ajout du fichier de licence (MIT).
+- Touche de pêche dans le menu Raccourcis du jeu.
+- Boutons « Réglages par défaut » et « Vider le carnet ».
+- Un carnet par personnage, avec l'option « Tous mes personnages ».
 
 ## 1.0.0 (2026-11-10)
 
