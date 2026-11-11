@@ -39,20 +39,23 @@ local ICON_SIZE = 26
 local MODEL_SIZE = 72
 
 local frame
+local canvas -- où l'on dessine le contenu (le cadre lui-même, sauf style WoW)
+local framed -- style WoW : cadre de fenêtre du jeu avec barre de titre
+local TITLE_ON, TITLE_OFF = { 1, 0.82, 0, 1 }, { 0.75, 0.75, 0.75, 1 }
 
 local function BuildHeader()
     -- Bout de scotch qui "tient" la fiche
     if Theme.deco.tape then
-        local tape = frame:CreateTexture(nil, "OVERLAY")
+        local tape = canvas:CreateTexture(nil, "OVERLAY")
         tape:SetSize(84, 20)
-        tape:SetPoint("CENTER", frame, "TOP", 18, 0)
+        tape:SetPoint("CENTER", canvas, "TOP", 18, 0)
         Theme.Fill(tape, c.tape)
         tape:SetRotation(math.rad(-2.5))
     end
 
-    frame.dot = frame:CreateTexture(nil, "ARTWORK")
+    frame.dot = canvas:CreateTexture(nil, "ARTWORK")
     frame.dot:SetSize(6, 6)
-    frame.dot:SetPoint("TOPLEFT", PAD + 1, -17)
+    if not framed then frame.dot:SetPoint("TOPLEFT", PAD + 1, -17) end
     frame.dot:SetRotation(math.rad(45))
     Theme.Fill(frame.dot, c.gold)
 
@@ -64,11 +67,29 @@ local function BuildHeader()
     fade:SetDuration(0.6)
     frame.pulse = pulse
 
-    frame.status = W.Text(frame, Theme.font.kicker)
-    frame.status:SetPoint("LEFT", frame.dot, "RIGHT", 8, 0)
+    frame.status = W.Text(canvas, Theme.font.kicker)
+    local close, menu
+    if framed then
+        -- Dans la barre de titre, comme les fenêtres du jeu
+        local bar = CreateFrame("Frame", nil, frame)
+        bar:SetAllPoints()
+        bar:SetFrameLevel(frame:GetFrameLevel() + 10)
+        frame.status:SetParent(bar)
+        frame.status:SetPoint("TOP", 4, -5)
+        frame.dot:SetParent(bar)
+        frame.dot:SetPoint("RIGHT", frame.status, "LEFT", -7, 0)
+        close = CreateFrame("Button", nil, bar, "UIPanelCloseButton")
+        close:SetPoint("TOPRIGHT", 1, 0)
+        menu = W.GlyphButton(bar, "menu", 16, TITLE_ON, { 1, 1, 1, 1 })
+        menu:SetPoint("RIGHT", close, "LEFT", 0, 0)
+    else
+        frame.status:SetPoint("LEFT", frame.dot, "RIGHT", 8, 0)
+        close = W.GlyphButton(canvas, "close", 18)
+        close:SetPoint("TOPRIGHT", -8, -10)
+        menu = W.GlyphButton(canvas, "menu", 18)
+        menu:SetPoint("RIGHT", close, "LEFT", -2, 0)
+    end
 
-    local close = W.GlyphButton(frame, "close", 18)
-    close:SetPoint("TOPRIGHT", -8, -10)
     close:SetScript("OnClick", function()
         if ns.Fishing.active then
             ns.Fishing:SetActive(false)
@@ -78,8 +99,6 @@ local function BuildHeader()
     end)
     W.SetTooltip(close, L.HUD_CLOSE, L.HUD_CLOSE_TIP)
 
-    local menu = W.GlyphButton(frame, "menu", 18)
-    menu:SetPoint("RIGHT", close, "LEFT", -2, 0)
     menu:SetScript("OnClick", function() ns.Window:Toggle() end)
     W.SetTooltip(menu, L.HUD_JOURNAL)
 
@@ -88,11 +107,11 @@ end
 
 local function BuildAssistant()
     -- Bubulle (son illustration qui nage)
-    frame.mascot = ns.Mascot:CreateModel(frame, MODEL_SIZE)
+    frame.mascot = ns.Mascot:CreateModel(canvas, MODEL_SIZE)
     frame.mascot:SetPoint("TOPLEFT", 6, -30)
 
     -- Ce qu'il dit, écrit à la main à côté de lui
-    frame.say = W.Text(frame, Theme.font.handSmall)
+    frame.say = W.Text(canvas, Theme.font.handSmall)
     frame.say:SetPoint("TOPLEFT", MODEL_SIZE + 12, -34)
     frame.say:SetPoint("RIGHT", -PAD, 0)
     frame.say:SetHeight(64)
@@ -107,21 +126,21 @@ local function BuildAssistant()
     alpha:SetDuration(0.25)
     frame.sayAppear = appear
 
-    frame.location = W.Text(frame, Theme.font.small)
+    frame.location = W.Text(canvas, Theme.font.small)
     frame.location:SetPoint("TOPLEFT", PAD, -106)
     frame.location:SetPoint("RIGHT", -PAD, 0)
 end
 
 local function BuildStats()
     -- Le bouchon qui file le long de sa ligne
-    frame.barText = W.Text(frame, Theme.font.tiny)
+    frame.barText = W.Text(canvas, Theme.font.tiny)
     frame.barText:SetPoint("TOPLEFT", PAD, -126)
     frame.barText:SetPoint("RIGHT", -60, 0)
 
-    frame.barTime = W.Text(frame, Theme.font.numberSmall, "RIGHT")
+    frame.barTime = W.Text(canvas, Theme.font.numberSmall, "RIGHT")
     frame.barTime:SetPoint("TOPRIGHT", -PAD, -124)
 
-    frame.bar = W.Bar(frame, 2)
+    frame.bar = W.Bar(canvas, 2)
     frame.bar:SetPoint("TOPLEFT", PAD, -150)
     frame.bar:SetPoint("TOPRIGHT", -PAD, -150)
     frame.bar:SetStatusBarColor(c.ink[1], c.ink[2], c.ink[3], 0.85)
@@ -137,10 +156,10 @@ local function BuildStats()
     local labels = { L.STAT_CATCHES, L.STAT_CASTS, L.STAT_PER_HOUR, L.STAT_SUCCESS_SHORT }
     local cellWidth = (WIDTH - PAD * 2) / #labels
     for i, label in ipairs(labels) do
-        local value = W.Text(frame, Theme.font.numberSmall, "CENTER")
-        value:SetPoint("TOP", frame, "TOPLEFT", PAD + cellWidth * (i - 0.5), -162)
+        local value = W.Text(canvas, Theme.font.numberSmall, "CENTER")
+        value:SetPoint("TOP", canvas, "TOPLEFT", PAD + cellWidth * (i - 0.5), -162)
         value:SetText("0")
-        local caption = W.Text(frame, Theme.font.tiny, "CENTER")
+        local caption = W.Text(canvas, Theme.font.tiny, "CENTER")
         caption:SetPoint("TOP", value, "BOTTOM", 0, 0)
         caption:SetText(label)
         frame.stats[i] = value
@@ -149,39 +168,58 @@ local function BuildStats()
     -- Dernières prises
     frame.icons = {}
     for i = 1, ICONS do
-        local icon = W.ItemIcon(frame, ICON_SIZE)
+        local icon = W.ItemIcon(canvas, ICON_SIZE)
         icon:SetPoint("TOPLEFT", PAD + (i - 1) * (ICON_SIZE + 6), -204)
         icon:Hide()
         frame.icons[i] = icon
     end
-    frame.noCatch = W.Text(frame, Theme.font.tiny)
+    frame.noCatch = W.Text(canvas, Theme.font.tiny)
     frame.noCatch:SetPoint("TOPLEFT", PAD, -210)
     frame.noCatch:SetPoint("RIGHT", -PAD, 0)
     frame.noCatch:SetText(L.HUD_NO_CATCH)
 
     -- Pied
-    local divider = W.Line(frame, c.line)
+    local divider = W.Line(canvas, c.line)
     divider:SetPoint("BOTTOMLEFT", PAD, 28)
     divider:SetPoint("BOTTOMRIGHT", -PAD, 28)
 
-    frame.clock = W.Text(frame, Theme.font.tiny)
+    frame.clock = W.Text(canvas, Theme.font.tiny)
     frame.clock:SetPoint("BOTTOMLEFT", PAD, 10)
 
     -- Compétence et appât, à droite du chrono
-    frame.gear = W.Text(frame, Theme.font.tiny, "RIGHT")
+    frame.gear = W.Text(canvas, Theme.font.tiny, "RIGHT")
     frame.gear:SetPoint("BOTTOMRIGHT", -PAD, 10)
 end
 
 local function Build()
     frame = CreateFrame("Frame", "BubulleHUD", UIParent, "BackdropTemplate")
-    frame:SetSize(WIDTH, HEIGHT)
     frame:SetFrameStrata("MEDIUM")
-    Theme.Surface(frame, "card")
+    framed = Theme.deco.hudFrame
+    if framed then
+        -- Cadre de métal et barre de titre ; le contenu sur un parchemin.
+        -- Le haut du contenu (statut, boutons) passe dans la barre de titre.
+        local SIDE, TOP, BOTTOM, LIFT = 10, 26, 8, 16
+        frame:SetSize(WIDTH + SIDE * 2, HEIGHT + TOP - LIFT + BOTTOM)
+        Theme.Surface(frame, "window")
+        local paper = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+        paper:SetPoint("TOPLEFT", SIDE, -TOP)
+        paper:SetPoint("BOTTOMRIGHT", -SIDE, BOTTOM)
+        paper:SetFrameLevel(frame:GetFrameLevel() + 2)
+        Theme.Surface(paper, "card")
+        canvas = CreateFrame("Frame", nil, frame)
+        canvas:SetSize(WIDTH, HEIGHT)
+        canvas:SetPoint("TOPLEFT", SIDE, -(TOP - LIFT))
+        canvas:SetFrameLevel(frame:GetFrameLevel() + 3)
+    else
+        frame:SetSize(WIDTH, HEIGHT)
+        Theme.Surface(frame, "card")
+        canvas = frame
+    end
     frame:Hide()
     W.AttachFader(frame, 0.2)
 
     -- Filet doré intérieur et ombre portée : une vraie fiche posée à l'écran
-    local inner = CreateFrame("Frame", nil, frame)
+    local inner = CreateFrame("Frame", nil, canvas)
     inner:SetPoint("TOPLEFT", 4, -4)
     inner:SetPoint("BOTTOMRIGHT", -4, 4)
     W.GiltFrame(inner, nil, { c.goldDk[1], c.goldDk[2], c.goldDk[3], 0.5 }, "BORDER")
@@ -249,8 +287,10 @@ end
 function HUD:UpdateStatus()
     local active = ns.Fishing.active
     frame.status:SetText(active and L.MODE_ON or L.MODE_OFF)
-    Theme.Paint(frame.status, active and c.gold or c.inkFaint)
-    Theme.Fill(frame.dot, active and c.gold or c.inkFaint)
+    local on, off = c.gold, c.inkFaint
+    if framed then on, off = TITLE_ON, TITLE_OFF end
+    Theme.Paint(frame.status, active and on or off)
+    Theme.Fill(frame.dot, active and on or off)
     if ns.Fishing.channeling then
         frame.pulse:Play()
     else

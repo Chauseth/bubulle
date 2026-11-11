@@ -337,6 +337,7 @@ THEMES.wow = {
         field    = { bg = { 0, 0, 0, 0.55 }, border = { 0.35, 0.25, 0.15, 1 } },
     },
     deco = {
+        hudFrame = true, -- panneau de pêche dans un cadre de fenêtre du jeu
         gilt = false, ribbon = false, corners = false, spine = false, tape = false,
         pageShade = false, drop = false, folio = false, close = "blizzard", widgets = "blizzard",
         title = true, headerSpace = 10,

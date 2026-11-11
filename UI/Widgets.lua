@@ -308,7 +308,7 @@ function W.Button(parent, text, width, height, style)
 end
 
 --- Petit bouton tracé à l'encre : "close" (croix) ou "menu" (3 traits).
-function W.GlyphButton(parent, kind, size)
+function W.GlyphButton(parent, kind, size, color, hoverColor)
     size = size or 18
     local button = CreateFrame("Button", nil, parent)
     button:SetSize(size, size)
@@ -316,7 +316,7 @@ function W.GlyphButton(parent, kind, size)
     local strokes = {}
     local function Stroke()
         local t = button:CreateTexture(nil, "ARTWORK")
-        Theme.Fill(t, c.inkSoft)
+        Theme.Fill(t, color or c.inkSoft)
         strokes[#strokes + 1] = t
         return t
     end
@@ -337,11 +337,11 @@ function W.GlyphButton(parent, kind, size)
         end
     end
 
-    local function Tint(color)
-        for _, t in ipairs(strokes) do Theme.Fill(t, color) end
+    local function Tint(tint)
+        for _, t in ipairs(strokes) do Theme.Fill(t, tint) end
     end
-    button:SetScript("OnEnter", function() Tint(kind == "close" and c.danger or c.gold) end)
-    button:SetScript("OnLeave", function() Tint(c.inkSoft) end)
+    button:SetScript("OnEnter", function() Tint(hoverColor or (kind == "close" and c.danger or c.gold)) end)
+    button:SetScript("OnLeave", function() Tint(color or c.inkSoft) end)
     return button
 end
 
