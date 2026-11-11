@@ -70,6 +70,10 @@ function methods:SetBackdropBorderColor(r,g,b) assert(type(r)=="number" and type
 function methods:SetStatusBarColor(r,g,b) assert(type(r)=="number","statusbarcolor") end
 function methods:SetFontObject(f) assert(f, "SetFontObject nil") end
 function methods:SetTexture(t) self._tex = t end
+-- Comme le vrai jeu : une texture masquée refuse SetTexCoord
+function methods:SetMask(m) self._mask = m end
+function methods:AddMaskTexture(m) self._mask = m end
+function methods:SetTexCoord() assert(not self._mask, "Texture:SetTexCoord(): Cannot set tex coords when texture has mask.") end
 function methods:Click(button, down) self:Fire("OnClick", button or "LeftButton", down) ; self:Fire("PostClick", button or "LeftButton", down) end
 function methods:SetDisplayInfo(id) log("SetDisplayInfo "..tostring(id)) end
 function methods:SetCreature(id) log("SetCreature "..tostring(id)) end
@@ -145,6 +149,8 @@ _G.LootFrame = new("Frame"); LootFrame._shown = false
 _G.HideUIPanel = function() end
 _G.print = print
 _G.issecretvalue = nil
+-- Une erreur dans un abonné doit faire échouer le test, pas passer inaperçue
+_G.geterrorhandler = function() return function(e) error(e, 0) end end
 _G.UnitGUID = function() return "Player-1" end
 _G.GetBuildInfo = function() return "1.60.1", "70888", "Nov 2026", TOCV end
 local poleEquipped = true

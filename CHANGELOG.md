@@ -5,12 +5,12 @@
 **English**
 
 - The fishing key now has its own "Bubulle" section in the game's Key Bindings menu (it was hidden in the AddOns section, without Bubulle's name).
-- In the Settings tab, the key button no longer stays stuck on "Press a key..." after you pick a key.
+- Fixed a "SetTexCoord ... mask" error shown when changing a setting. It came from the round minimap icon, and it stopped the Settings tab from refreshing (the key button stayed on "Press a key...").
 
 **Français**
 
 - La touche de pêche a maintenant sa propre rubrique « Bubulle » dans le menu Raccourcis du jeu (elle était cachée dans la rubrique AddOns, sans le nom de Bubulle).
-- Dans l'onglet Réglages, le bouton de touche ne reste plus bloqué sur « Appuie sur une touche... » après ton choix.
+- Correction de l'erreur « SetTexCoord ... mask » qui apparaissait en changeant un réglage. Elle venait de l'icône ronde de la minicarte, et empêchait l'onglet Réglages de se mettre à jour (le bouton de touche restait sur « Appuie sur une touche... »).
 
 ## 1.1.0
 

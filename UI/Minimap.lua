@@ -101,8 +101,9 @@ end
 function MinimapButton:RefreshIcon()
     if not button then return end
     ns.Mascot:SetPortrait(button.icon)
-    if button.icon.SetMask then
+    if button.icon.SetMask and not button.iconMasked then
         button.icon:SetMask("Interface\\CharacterFrame\\TempPortraitAlphaMask")
+        button.iconMasked = true
     end
 end
 

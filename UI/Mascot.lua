@@ -19,9 +19,11 @@ local ILLUSTRATION = "Interface\\AddOns\\Bubulle\\Media\\Bubulle"
 Mascot.ILLUSTRATION = ILLUSTRATION
 
 --- Met l'image de Bubulle sur une texture (petits portraits, minicarte).
+--- Pas de SetTexCoord ici : le jeu le refuse sur une texture découpée en
+--- rond par un masque (minicarte, page d'options), et l'image entière est
+--- déjà affichée par défaut.
 function Mascot:SetPortrait(texture)
     texture:SetTexture(ILLUSTRATION)
-    texture:SetTexCoord(0, 1, 0, 1)
 end
 
 --- Fabrique un cadre qui affiche Bubulle en train de "nager" sur place.

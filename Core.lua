@@ -116,8 +116,14 @@ end
 function ns:Fire(message, ...)
     local list = listeners[message]
     if not list then return end
+    -- Si un abonné plante, les suivants sont quand même prévenus (sinon une
+    -- seule erreur empêchait par exemple la fenêtre de se mettre à jour).
     for i = 1, #list do
-        list[i](...)
+        local ok, err = pcall(list[i], ...)
+        if not ok then
+            local handler = geterrorhandler and geterrorhandler()
+            if handler then handler(err) else print(err) end
+        end
     end
 end
 
