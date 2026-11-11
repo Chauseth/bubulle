@@ -181,4 +181,41 @@ def bookmark(img, k):
 
 save_rgba(supersample(bookmark, (128, 32)), "bookmark")
 
+# Liseré doré du style WoW : suit le bord du ruban et son V (non teinté).
+def bookmark_trim(img, k):
+    w, h = 128 * k, 32 * k
+    notch = 14 * k
+    d = ImageDraw.Draw(img)
+    gold, deep = (238, 200, 110, 255), (150, 105, 40, 255)
+    lw = int(1.6 * k)
+    outline = [(0, lw / 2), (w - lw / 2, lw / 2), (w - notch, h / 2), (w - lw / 2, h - lw / 2), (0, h - lw / 2)]
+    d.line(outline, fill=deep, width=lw + 2 * k, joint="curve")
+    d.line(outline, fill=gold, width=lw, joint="curve")
+
+
+save_rgba(supersample(bookmark_trim, (128, 32)), "bookmark_trim")
+
+
+# Intercalaire en carton du style Clair : coins arrondis côté droit.
+def cardtab(img, k):
+    w, h = 128 * k, 32 * k
+    r = 9 * k
+    mask = Image.new("L", (w, h), 0)
+    md = ImageDraw.Draw(mask)
+    md.rounded_rectangle([-r, 0, w - 1, h - 1], radius=r, fill=255)
+    grain = np.kron(blur_noise(128, 0.7)[:32, :], np.ones((k, k)))
+    y = np.linspace(0, 1, h)[:, None]
+    lum = 238 * (1 + grain * 0.010) * (1.03 - 0.08 * y)
+    arr = np.zeros((h, w, 4), np.float32)
+    arr[..., 0] = arr[..., 1] = arr[..., 2] = lum
+    arr[..., 3] = np.asarray(mask, np.float32)
+    card = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), "RGBA")
+    ImageDraw.Draw(card).rounded_rectangle([-r, 0, w - 1, h - 1], radius=r, outline=(150, 150, 150, 255),
+                                           width=int(1.2 * k))
+    img.paste(card)
+
+
+save_rgba(supersample(cardtab, (128, 32)), "cardtab")
+
+
 print("Textures écrites dans", MEDIA)

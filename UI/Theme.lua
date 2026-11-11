@@ -35,6 +35,8 @@ Theme.tex = {
     corner    = MEDIA .. "corner",
     ribbon    = MEDIA .. "ribbon",
     bookmark  = MEDIA .. "bookmark",
+    bookTrim  = MEDIA .. "bookmark_trim",
+    cardTab   = MEDIA .. "cardtab",
     bobber    = MEDIA .. "bobber",
     button    = MEDIA .. "button",
     check     = "Interface\\Buttons\\UI-CheckBox-Check",
@@ -159,6 +161,7 @@ THEMES.carnet = {
     quality = QUALITY_BRIGHT,
     fonts = ALEGREYA, sizes = SIZES_SERIF,
     fontShadow = { 0, 0, 0, 0.6 },
+    tabStyle = "ribbon", -- onglets : ruban de tissu
     -- Marque-pages des onglets (un ruban par onglet)
     marks = { { 0.66, 0.24, 0.16 }, { 0.16, 0.38, 0.44 }, { 0.58, 0.44, 0.16 }, { 0.40, 0.26, 0.42 } },
     surface = {
@@ -208,8 +211,9 @@ THEMES.clair = {
     },
     fonts = ALEGREYA, sizes = SIZES_SERIF,
     fontShadow = { 0, 0, 0, 0 },
+    tabStyle = "card", -- onglets : intercalaire en carton
     -- Marque-pages des onglets (un ruban par onglet)
-    marks = { { 0.74, 0.32, 0.22 }, { 0.22, 0.48, 0.54 }, { 0.68, 0.53, 0.22 }, { 0.48, 0.33, 0.52 } },
+    marks = { { 0.95, 0.74, 0.68 }, { 0.70, 0.86, 0.90 }, { 0.95, 0.86, 0.64 }, { 0.84, 0.76, 0.90 } },
     surface = {
         window = { bgFile = tex.leather, border = { 0.04, 0.02, 0.01, 1 } },
         page   = { bgFile = tex.pageLight, border = { 0.40, 0.30, 0.18, 1 } },
@@ -254,6 +258,7 @@ THEMES.sombre = {
     quality = QUALITY_BRIGHT,
     fonts = FIRA, sizes = SIZES_SANS,
     fontShadow = { 0, 0, 0, 0.35 },
+    tabStyle = "flat", -- onglets : languette plate
     -- Marque-pages des onglets (un ruban par onglet)
     marks = { { 0.72, 0.30, 0.28 }, { 0.24, 0.46, 0.74 }, { 0.70, 0.54, 0.20 }, { 0.50, 0.38, 0.70 } },
     surface = {
@@ -312,6 +317,7 @@ THEMES.wow = {
     },
     fonts = GAME, sizes = SIZES_SANS,
     fontShadow = { 0, 0, 0, 0 },
+    tabStyle = "gilded", -- onglets : ruban à liseré doré
     -- Marque-pages des onglets (un ruban par onglet)
     marks = { { 0.56, 0.07, 0.05 }, { 0.07, 0.22, 0.48 }, { 0.10, 0.36, 0.12 }, { 0.34, 0.10, 0.44 } },
     surface = {
@@ -366,12 +372,15 @@ function Theme.Apply(key)
     current = theme
     Theme.key = THEMES[key] and key or "carnet"
 
+    c.tabText, c.tabTextOn = nil, nil
     for name, value in pairs(theme.color) do
         c[name] = { value[1], value[2], value[3], value[4] or 1 }
     end
-    -- Texte clair sur les rubans des onglets, sauf avis contraire du style
-    c.tabText = c.tabText or { 0.93, 0.88, 0.78, 1 }
-    c.tabTextOn = c.tabTextOn or { 1, 0.97, 0.90, 1 }
+    -- Onglets : texte clair sur les rubans, couleur d'encre sinon
+    Theme.tabStyle = theme.tabStyle or "ribbon"
+    local ribbon = Theme.tabStyle == "ribbon" or Theme.tabStyle == "gilded"
+    c.tabText = c.tabText or (ribbon and { 0.93, 0.88, 0.78, 1 } or c.inkSoft)
+    c.tabTextOn = c.tabTextOn or (ribbon and { 1, 0.97, 0.90, 1 } or c.ink)
     Theme.marks = theme.marks
     Copy(Theme.deco, theme.deco)
     Theme.ACCENT_HEX = theme.hex.accent

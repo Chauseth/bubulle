@@ -5,12 +5,12 @@
 **English**
 
 - New "Style" tab: four looks for Bubulle (Notebook, Light, Dark, WoW).
-- Side tabs are now colored ribbon bookmarks.
+- Side tabs are now bookmarks, with their own look in each style.
 
 **Français**
 
 - Nouvel onglet « Style » : quatre looks pour Bubulle (Carnet, Clair, Sombre, WoW).
-- Les onglets deviennent des marque-pages en ruban de couleur.
+- Les onglets deviennent des marque-pages, avec leur propre look dans chaque style.
 
 ## 1.1.1
 

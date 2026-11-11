@@ -606,26 +606,65 @@ function W.KeyButton(parent, get, set, width)
 end
 
 ------------------------------------------------------------------------
--- Onglets : des marque-pages en ruban qui dépassent du bord du livre.
--- Chaque onglet a sa couleur (Theme.marks) ; l'onglet ouvert sort plus
--- loin et prend sa couleur vive, les autres restent un peu sombres.
+-- Onglets : des marque-pages qui dépassent du bord du livre. Chaque
+-- style a sa forme (Theme.tabStyle) et chaque onglet sa couleur
+-- (Theme.marks). L'onglet ouvert sort plus loin et prend sa couleur vive.
+--   ribbon : ruban de tissu        gilded : ruban à liseré doré
+--   card   : intercalaire carton   flat   : languette plate
 ------------------------------------------------------------------------
 local TAB_W, TAB_H, TAB_GAP = 100, 30, 10
 local TAB_OUT, TAB_HOVER = 18, 6 -- dépassement de l'onglet ouvert / survolé
+-- Assombrissement des onglets fermés / survolés
+local TAB_DIM = { ribbon = { 0.70, 0.88 }, gilded = { 0.70, 0.88 }, card = { 0.86, 0.94 } }
+
+local function TabArt(tab, style)
+    local art = tab:CreateTexture(nil, "BACKGROUND")
+    art:SetAllPoints()
+    if style == "flat" then
+        art:SetColorTexture(1, 1, 1, 1)
+        -- Barre de couleur côté livre
+        tab.bar = tab:CreateTexture(nil, "BORDER")
+        tab.bar:SetPoint("TOPLEFT")
+        tab.bar:SetPoint("BOTTOMLEFT")
+        tab.bar:SetColorTexture(1, 1, 1, 1)
+        tab.bar:SetVertexColor(tab.color[1], tab.color[2], tab.color[3])
+        return art
+    end
+    art:SetTexture(style == "card" and Theme.tex.cardTab or Theme.tex.bookmark)
+    if style == "gilded" then
+        local trim = tab:CreateTexture(nil, "ARTWORK")
+        trim:SetAllPoints()
+        trim:SetTexture(Theme.tex.bookTrim)
+    end
+    -- Ombre à la racine : l'onglet semble sortir de sous la couverture
+    local root = tab:CreateTexture(nil, "BORDER")
+    root:SetPoint("TOPLEFT")
+    root:SetPoint("BOTTOMLEFT")
+    root:SetWidth(14)
+    Theme.Shade(root, "HORIZONTAL", style == "card" and 0.3 or 0.6, 0)
+    return art
+end
 
 function W.Tabs(parent, items, onSelect)
+    local style = Theme.tabStyle
     local holder = CreateFrame("Frame", nil, parent)
     holder:SetSize(TAB_W + TAB_OUT, #items * (TAB_H + TAB_GAP))
     holder.buttons = {}
 
-    -- Longueur et teinte du ruban selon son état
+    -- Longueur et teinte de l'onglet selon son état
     local function Paint(tab)
         local on = holder.selected == tab.key
-        local length = TAB_W + (on and TAB_OUT or tab.hover and TAB_HOVER or 0)
-        local light = on and 1 or tab.hover and 0.88 or 0.70
-        local col = tab.color
-        tab:SetWidth(length)
-        tab.ribbon:SetVertexColor(col[1] * light, col[2] * light, col[3] * light)
+        tab:SetWidth(TAB_W + (on and TAB_OUT or tab.hover and TAB_HOVER or 0))
+        if style == "flat" then
+            local bg = (on or tab.hover) and c.tabHi or c.tab
+            tab.art:SetVertexColor(bg[1], bg[2], bg[3])
+            tab.bar:SetWidth(on and 4 or 2)
+        else
+            local dim = TAB_DIM[style] or TAB_DIM.ribbon
+            local light = on and 1 or tab.hover and dim[2] or dim[1]
+            local col = tab.color
+            tab.art:SetVertexColor(col[1] * light, col[2] * light, col[3] * light)
+        end
         Theme.Paint(tab.text, (on or tab.hover) and c.tabTextOn or c.tabText)
         tab:SetFrameLevel(holder:GetFrameLevel() + (on and 2 or 1))
     end
@@ -636,22 +675,16 @@ function W.Tabs(parent, items, onSelect)
         tab.color = Theme.marks[(i - 1) % #Theme.marks + 1]
         tab:SetSize(TAB_W, TAB_H)
         tab:SetPoint("TOPLEFT", 0, -(i - 1) * (TAB_H + TAB_GAP))
-
-        tab.ribbon = tab:CreateTexture(nil, "BACKGROUND")
-        tab.ribbon:SetAllPoints()
-        tab.ribbon:SetTexture(Theme.tex.bookmark)
-        -- Ombre à la racine : le ruban semble sortir de sous la couverture
-        local root = tab:CreateTexture(nil, "BORDER")
-        root:SetPoint("TOPLEFT")
-        root:SetPoint("BOTTOMLEFT")
-        root:SetWidth(14)
-        Theme.Shade(root, "HORIZONTAL", 0.6, 0)
+        tab.art = TabArt(tab, style)
 
         tab.text = W.Text(tab, Theme.font.button, "LEFT")
         tab.text:SetPoint("LEFT", 16, 0)
         tab.text:SetText(item.label)
-        tab.text:SetShadowColor(0, 0, 0, 0.8)
-        tab.text:SetShadowOffset(1, -1)
+        if style == "ribbon" or style == "gilded" then
+            -- Texte clair sur tissu foncé : une ombre le détache
+            tab.text:SetShadowColor(0, 0, 0, 0.8)
+            tab.text:SetShadowOffset(1, -1)
+        end
 
         tab:SetScript("OnClick", function()
             ns.PlayUISound("IG_CHARACTER_INFO_TAB")
