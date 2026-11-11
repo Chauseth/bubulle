@@ -28,6 +28,8 @@ Bubulle permet de lancer et de ferrer avec la même touche, monte le son du bouc
 
 **Un panneau pendant la pêche.** Il affiche le temps du bouchon, ta compétence de pêche (par exemple `110 (+52) / 150`), le temps restant de ton appât, tes dernières prises et les chiffres de la session. Il te prévient aussi quand tu n'as pas de canne équipée.
 
+**Quatre styles.** Choisis ton look dans l'onglet Style : Carnet, Clair, Sombre ou WoW (comme les menus du jeu).
+
 Le butin est ramassé automatiquement pendant la pêche. Il y a un bouton sur la minicarte, et chacune de ces fonctions peut être désactivée dans les options.
 
 ## Commandes

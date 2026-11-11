@@ -18,6 +18,8 @@ Bubulle lets you cast and hook with the same key, makes the bobber splash louder
 
 **Panel while fishing.** It shows the bobber timer, your fishing skill (for example `110 (+52) / 150`), how long your lure has left, your last catches and the session numbers. It also tells you when you have no fishing pole equipped.
 
+**Four styles.** Pick the look you like in the Style tab: Notebook, Light, Dark, or WoW (the game's own menus).
+
 Loot is picked up automatically while you fish. There is a minimap button, and each of these features can be turned off in the options.
 
 ## Commands
