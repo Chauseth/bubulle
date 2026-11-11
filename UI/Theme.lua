@@ -315,9 +315,12 @@ THEMES.wow = {
         -- Cadre de métal des fenêtres du jeu, fond de roche
         window   = { panel = "ButtonFrameTemplateNoPortrait", bgFile = BLIZZ.rock },
         -- Les deux pages du grimoire
-        pageLeft = { atlas = "spellbook-Page-Left-C60" },
-        page     = { atlas = "spellbook-Page-Right-C60" },
-        card     = { atlas = "spellbook-Page-Right-C60" },
+        -- Le haut des images du grimoire est sombre : on le coupe (crop),
+        -- et les deux pages débordent vers la reliure pour se toucher.
+        pageLeft  = { atlas = "spellbook-Page-Left-C60", crop = 0.08, outset = { 0, 7 } },
+        pageRight = { atlas = "spellbook-Page-Right-C60", crop = 0.08, outset = { 7, 0 } },
+        page      = { atlas = "spellbook-Page-Right-C60", crop = 0.08 },
+        card      = { atlas = "spellbook-Page-Right-C60", crop = 0.08 },
         toast    = Tip({ 0.84, 0.74, 0.56, 0.97 }, { 0.55, 0.42, 0.25, 1 }),
         tabOn    = Tip({ 0.10, 0.10, 0.10, 0.95 }, { 1, 0.82, 0, 1 }),
         tabOff   = Tip({ 0.05, 0.05, 0.05, 0.9 }, { 0.5, 0.5, 0.5, 1 }),
@@ -448,11 +451,23 @@ function Theme.Surface(frame, kind, themeKey)
     -- Image du jeu étirée sur tout le cadre (pages du grimoire)
     if s.atlas then
         frame:SetBackdrop(nil)
-        if not frame.surfaceArt then
-            frame.surfaceArt = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
-            frame.surfaceArt:SetAllPoints()
+        local art = frame.surfaceArt
+        if not art then
+            art = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
+            frame.surfaceArt = art
         end
-        frame.surfaceArt:SetAtlas(s.atlas)
+        local out = s.outset or {}
+        art:ClearAllPoints()
+        art:SetPoint("TOPLEFT", -(out[1] or 0), 0)
+        art:SetPoint("BOTTOMRIGHT", out[2] or 0, 0)
+        art:SetAtlas(s.atlas)
+        if s.crop then
+            -- Coordonnées de l'image dans sa planche : on rogne le haut.
+            local left, top, _, bottom, right = art:GetTexCoord()
+            if left and right then
+                art:SetTexCoord(left, right, top + (bottom - top) * s.crop, bottom)
+            end
+        end
         return
     end
     -- Cadre de métal du jeu (bordure en 9 morceaux) sur fond de roche

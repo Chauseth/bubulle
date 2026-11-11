@@ -75,7 +75,8 @@ function methods:SetTexture(t) self._tex = t end
 -- Comme le vrai jeu : une texture masquée refuse SetTexCoord
 function methods:SetMask(m) self._mask = m end
 function methods:AddMaskTexture(m) self._mask = m end
-function methods:SetTexCoord() assert(not self._mask, "Texture:SetTexCoord(): Cannot set tex coords when texture has mask.") end
+function methods:SetTexCoord(a,b,c,d) assert(not self._mask, "Texture:SetTexCoord(): Cannot set tex coords when texture has mask."); self._tc={a,b,c,d} end
+function methods:GetTexCoord() local t=self._tc or {0,1,0,1}; return t[1],t[3],t[1],t[4],t[2],t[3],t[2],t[4] end
 function methods:Click(button, down) self:Fire("OnClick", button or "LeftButton", down) ; self:Fire("PostClick", button or "LeftButton", down) end
 function methods:SetDisplayInfo(id) log("SetDisplayInfo "..tostring(id)) end
 function methods:SetCreature(id) log("SetCreature "..tostring(id)) end

@@ -132,7 +132,7 @@ end
 local function CreatePage(parent, side)
     local page = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     page:SetSize(PAGE_W, BOOK_H - COVER * 2)
-    Theme.Surface(page, side == "left" and "pageLeft" or "page")
+    Theme.Surface(page, side == "left" and "pageLeft" or "pageRight")
     W.GiltFrame(page, 9, c.goldDk, "BORDER")
 
     -- Ombre vers la reliure : la page "plonge" dans le pli.
