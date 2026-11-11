@@ -93,6 +93,11 @@ _G.wipe = function(t) for k in pairs(t) do t[k]=nil end return t end
 _G.tinsert = table.insert; _G.strtrim = function(s) return (s:gsub("^%s+",""):gsub("%s+$","")) end
 _G.UISpecialFrames = {}
 _G.GetLocale = function() return LOCALE end
+_G.UnitName = function() return "Thrall" end
+_G.GetRealmName = function() return "Forever" end
+-- Ancien carnet commun au compte (avant 1.1) : doit revenir à ce personnage
+_G.BubulleDB = { zones = { [1] = { name = "Vieux lac", catches = 2, total = 3, fish = { [6303] = 3 } } },
+  totals = { catches = 2, casts = 4, seconds = 60 }, history = {}, items = { [6303] = { n = "Lutjan", q = 1, c = 3 } } }
 _G.C_AddOns = { GetAddOnMetadata = function() return "1.0.0" end }
 _G.C_Timer = { After = function(d, f) table.insert(timers, {t=now+d, f=f}) end,
   NewTicker = function(d, f) local tk = {d=d,f=f,next=now+d,cancel=false}; tk.Cancel = function(s) s.cancel=true end; table.insert(timers, tk); return tk end }
@@ -211,7 +216,7 @@ step("loot fish", function()
            {type=1, link="|Hitem:200000:|h", name="Perle", qty=2, q=3, icon=6}, {type=2} }
   fire("LOOT_READY", true); fire("LOOT_OPENED", true, false); fire("CHANNEL_STOP_dummy")
   fire("UNIT_SPELLCAST_CHANNEL_STOP","player","guid",131476); fire("LOOT_CLOSED")
-  assert(ns.session.catches==1, "catches "..ns.session.catches); assert(ns.db.zones[2248].fish[200000]==2)
+  assert(ns.session.catches==1, "catches "..ns.session.catches); assert(ns.Journal:GetZone(2248).fish[200000]==2)
 end)
 step("toasts + speech", function() advance(10); BubulleHUD:Fire("OnUpdate", 0.1) end)
 step("second cast + miss", function() fire("UNIT_SPELLCAST_CHANNEL_START","player","g2",131476); advance(5); fire("UNIT_SPELLCAST_CHANNEL_STOP","player","g2",131476); advance(2); BubulleHUD:Fire("OnUpdate", 0.1); print("   say: "..tostring(BubulleHUD.shownLine)) end)
@@ -262,6 +267,18 @@ step("minimap button", function()
   b:Fire("OnClick", "LeftButton"); b:Fire("OnClick", "RightButton")
   SlashCmdList.BUBULLE("minimap"); assert(not b:IsShown()); SlashCmdList.BUBULLE("minimap"); assert(b:IsShown())
 end)
+step("journal per character", function()
+  local char = ns.Journal:Char(); assert(ns.db.chars["Thrall-Forever"] == char)
+  assert(ns.db.zones == nil and ns.db.totals == nil, "legacy journal not migrated")
+  assert(char.zones[1] and char.species[6303] and ns.db.items[6303].c == nil, "legacy data lost")
+  ns.db.chars["Jaina-Forever"] = { zones = { [1] = { name = "Vieux lac", catches = 5, total = 5, fish = { [999] = 5 } } },
+    totals = { catches = 5, casts = 5, seconds = 10 }, history = {}, species = { [999] = 5 } }
+  local mine = ns.Journal:GetTotals().catches
+  ns.db.settings.journalAllChars = true
+  assert(ns.Journal:GetTotals().catches == mine + 5, "all chars totals"); assert(ns.Journal:GetZone(1).catches == 7)
+  ns.Window:Open("journal"); local page = ns.Window.pages.journal; page.allChars:Fire("OnClick")
+  assert(ns.db.settings.journalAllChars == false); assert(ns.Journal:GetTotals().catches == mine)
+end)
 step("reset settings + clear journal", function()
   ns.db.settings.hudScale = 1.3; ns.Fishing:SetKey("F"); ns.db.welcomed = true
   local page = ns.Window.pages.options
@@ -269,9 +286,11 @@ step("reset settings + clear journal", function()
   assert(ns.db.settings.hudScale == 1, "scale not reset"); assert(ns.db.settings.oneKey == false); assert(gameBindings.F == nil, "game binding kept")
   assert(ns.db.welcomed == false); assert(BubulleWindow.welcome:IsShown(), "welcome not shown after reset")
   BubulleWindow.welcome:Hide(); ns.db.welcomed = true
-  local before = ns.db.totals.catches; assert(before > 0)
+  local before = ns.Journal:GetTotals().catches; assert(before > 0)
   page.clearJournal:Fire("OnClick")
-  assert(ns.db.totals.catches == 0 and next(ns.db.zones) == nil and next(ns.db.items) == nil, "journal not cleared")
+  local char = ns.Journal:Char()
+  assert(char.totals.catches == 0 and next(char.zones) == nil and next(char.species) == nil, "journal not cleared")
+  assert(ns.db.chars["Jaina-Forever"].totals.catches == 5, "other character touched")
   assert(ns.session.catches == 0)
   ns.Window:Open("journal"); ns.Window:Open("session")
 end)

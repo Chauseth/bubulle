@@ -6,12 +6,14 @@
 
 - The fishing key now also appears in the game's menu: Options > Key Bindings > AddOns > Bubulle. Change it there or in Bubulle's Settings tab, both stay in sync.
 - Two new buttons in the Settings tab: "Default settings" (also clears the fishing key and shows the welcome screen again) and "Clear journal". Both ask for confirmation.
+- Each character now has its own fishing journal. A "All my characters" box in the Journal tab shows every character together. Your existing journal goes to the first character you log in with.
 - New license file (MIT).
 
 **Français**
 
 - La touche de pêche apparaît aussi dans le menu du jeu : Options > Raccourcis > AddOns > Bubulle. Tu peux la changer là ou dans l'onglet Réglages de Bubulle, les deux restent synchronisés.
 - Deux nouveaux boutons dans l'onglet Réglages : « Réglages par défaut » (efface aussi la touche de pêche et réaffiche l'écran d'accueil) et « Vider le carnet ». Les deux demandent confirmation.
+- Chaque personnage a maintenant son propre carnet. La case « Tous mes personnages » de l'onglet Carnet les affiche tous ensemble. Ton carnet actuel revient au premier personnage avec lequel tu te connectes.
 - Ajout du fichier de licence (MIT).
 
 ## 1.0.0 (2026-11-10)

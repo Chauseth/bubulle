@@ -382,9 +382,20 @@ local function BuildJournalSpread(spread, left, right)
     spread.totals:SetWordWrap(true)
     spread.totals:SetSpacing(2)
 
+    -- Ce personnage seulement, ou tous les personnages du compte
+    spread.allChars = W.Checkbox(left, L.JOURNAL_ALL_CHARS, L.JOURNAL_ALL_CHARS_TIP,
+        function() return ns.db.settings.journalAllChars end,
+        function(v)
+            ns.db.settings.journalAllChars = v
+            selectedZone = false
+            Window:Refresh()
+        end)
+    spread.allChars:SetPoint("BOTTOMLEFT", 0, 50)
+    spread.allChars:SetPoint("RIGHT", 0, 0)
+
     spread.zones = W.List(left, 42, CreateZoneRow, UpdateZoneRow)
     spread.zones:SetPoint("TOPLEFT", 0, -88)
-    spread.zones:SetPoint("BOTTOMRIGHT", 12, 50)
+    spread.zones:SetPoint("BOTTOMRIGHT", 12, 82)
     spread.zones:SetEmptyText(L.JOURNAL_NO_ZONE)
 
     -- Page de droite : ce qu'on pêche dans la zone choisie
@@ -411,15 +422,17 @@ local function RefreshJournalSpread(spread)
     end
 
     -- La zone choisie n'existe plus (carnet vidé) : retour à "toutes".
-    if selectedZone and not ns.db.zones[selectedZone] then
+    if selectedZone and not Journal:GetZone(selectedZone) then
         selectedZone = false
     end
-    spread.zonesHead:Set(L.KICKER_JOURNAL, L.JOURNAL_ZONES, L.JOURNAL_ZONES_SUB:format(zoneCount))
+    local owner = ns.db.settings.journalAllChars and L.JOURNAL_ALL_CHARS_SHORT or (UnitName("player") or "")
+    spread.zonesHead:Set(L.KICKER_JOURNAL .. " · " .. owner, L.JOURNAL_ZONES, L.JOURNAL_ZONES_SUB:format(zoneCount))
+    spread.allChars:Refresh()
     spread.zones:SetData(zones)
 
     local fish, total
     if selectedZone then
-        local zone = ns.db.zones[selectedZone]
+        local zone = Journal:GetZone(selectedZone)
         fish, total = Journal:GetZoneFish(selectedZone)
         local last = zone.last and date(L.DATE_FORMAT, zone.last) or "–"
         spread.zoneHead:Set(L.KICKER_JOURNAL, zone.name or UNKNOWN,
@@ -431,7 +444,7 @@ local function RefreshJournalSpread(spread)
     end
     spread.fish:SetData(fish)
 
-    local totals = ns.db.totals
+    local totals = Journal:GetTotals()
     spread.totals:SetText(L.JOURNAL_TOTALS:format(
         totals.catches, totals.casts, ns.FormatClock(totals.seconds), Journal:CountSpecies()))
 end

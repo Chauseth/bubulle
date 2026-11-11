@@ -132,7 +132,7 @@ end)
 ns:RegisterEvent("ZONE_CHANGED_NEW_AREA", function()
     if not ns.Fishing.active then return end
     local mapID, zoneName = ns.Journal:GetLocation()
-    local zone = ns.db.zones[mapID]
+    local zone = ns.Journal:GetZone(mapID)
     if zone and (zone.catches or 0) > 0 then
         Assistant:Say(L.SAY_ZONE_KNOWN:format(zoneName, zone.catches), 7)
     else

@@ -54,11 +54,11 @@ ns.defaults = {
         newSpeciesAlert   = true,
         rareAlert         = true,
         alertSound        = true,
+        -- Carnet
+        journalAllChars   = false,  -- afficher les prises de tous les personnages
     },
-    zones     = {},   -- [mapID] = { name, catches, total, fish = { [itemID] = n }, last }
-    items     = {},   -- [itemID] = { n = nom, q = qualité, i = icône, c = total }
-    totals    = { catches = 0, casts = 0, seconds = 0 },
-    history   = {},   -- dernières prises { id, qty, t, m }
+    chars     = {},   -- le carnet de chaque personnage ["Nom-Royaume"] (voir Journal.lua)
+    items     = {},   -- mémoire des objets [itemID] = { n = nom, q = qualité, i = icône }
     welcomed  = false, -- l'écran d'accueil a déjà été vu
     positions = {},   -- positions des fenêtres déplaçables
     savedCVars = nil, -- réglages du jeu modifiés pendant la pêche (pour les rétablir)
@@ -225,14 +225,12 @@ end
 --- Efface tout le carnet : prises, zones, statistiques et la mémoire des
 -- objets (noms, icônes). Les réglages ne changent pas.
 function ns:ClearJournal()
-    local db = ns.db
-    wipe(db.zones)
-    wipe(db.items)
-    wipe(db.history)
-    wipe(db.totals)
-    ApplyDefaults(db.totals, ns.defaults.totals)
+    -- On efface ce qui est affiché : ce personnage, ou tous si l'option
+    -- "tous mes personnages" est cochée.
+    local all = ns.db.settings.journalAllChars
+    ns.Journal:Clear(all)
     ns.Journal:ResetSession()
-    ns.Print(L.JOURNAL_CLEARED)
+    ns.Print(all and L.JOURNAL_CLEARED_ALL or L.JOURNAL_CLEARED)
 end
 
 -- Fenêtres de confirmation (le jeu les affiche au milieu de l'écran).
@@ -241,7 +239,7 @@ local function Confirm(key, text, onAccept)
         onAccept()
         return
     end
-    StaticPopupDialogs[key] = StaticPopupDialogs[key] or {
+    StaticPopupDialogs[key] = {
         text = text,
         button1 = YES or "Yes",
         button2 = CANCEL or "Cancel",
@@ -260,7 +258,8 @@ function ns:AskResetSettings()
 end
 
 function ns:AskClearJournal()
-    Confirm("BUBULLE_CLEAR_JOURNAL", L.CONFIRM_CLEAR_JOURNAL, function() ns:ClearJournal() end)
+    local text = ns.db.settings.journalAllChars and L.CONFIRM_CLEAR_JOURNAL_ALL or L.CONFIRM_CLEAR_JOURNAL
+    Confirm("BUBULLE_CLEAR_JOURNAL", text, function() ns:ClearJournal() end)
 end
 
 ------------------------------------------------------------------------
