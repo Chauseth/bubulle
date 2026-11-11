@@ -1,5 +1,17 @@
 # Bubulle
 
+## 1.2.1
+
+**English**
+
+- WoW style: the fishing panel now uses the game's window frame.
+- Pale texts and small buttons are easier to read.
+
+**Français**
+
+- Style WoW : le panneau de pêche prend le cadre des fenêtres du jeu.
+- Textes pâles et petits boutons plus lisibles.
+
 ## 1.2.0
 
 **English**
